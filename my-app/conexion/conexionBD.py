@@ -12,7 +12,7 @@ def connectionBD():
             host="localhost",
                 #host="viaduct.proxy.rlwy.net",
             port=3309,
-            port=3309,
+
             user="root",
             passwd="rootpassword",
                 #passwd="-D2eD6aDb5Bg6dEbhAAeBB6gd3EheaBg",

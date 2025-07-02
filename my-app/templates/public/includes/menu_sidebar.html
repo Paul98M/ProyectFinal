@@ -68,31 +68,5 @@
         <div data-i18n="Tables">Salir</div>
       </a>
     </li>
-
-
-{% if dataLogin.rol == 1 %}
-  <li class="menu-item {% if request.path == '/lista-de-graficas' %} active {% endif %}">
-    <a href="/lista-de-graficas" class="menu-link">
-      <i class="bi bi-bar-chart-line me-3"></i>  
-      <div data-i18n="Tables">Graficas</div>
-    </a>
-  </li>
-{% endif %}
-{% if dataLogin.rol == 1 %}
-  <li class="menu-item {% if request.path == '/lista-de-graficas' %} active {% endif %}">
-    <a href="/lista-de-graficas" class="menu-link">
-      <i class="bi bi-bar-chart-line me-3"></i>  
-      <div data-i18n="Tables">Niños</div>
-    </a>
-  </li>
-{% endif %}
-{% if dataLogin.rol == 1 %}
-  <li class="menu-item {% if request.path == '/lista-de-graficas' %} active {% endif %}">
-    <a href="/lista-de-graficas" class="menu-link">
-      <i class="bi bi-bar-chart-line me-3"></i>  
-      <div data-i18n="Tables">Graficas2</div>
-    </a>
-  </li>
-{% endif %}
   </ul>
 </aside>

@@ -2,7 +2,6 @@
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session
 from flask import jsonify
-from controllers.funciones_home import obtenerroles
 
 # Importando mi conexión a BD
 from conexion.conexionBD import connectionBD
@@ -155,109 +154,5 @@ def cerraSesion():
         else:
             flash('recuerde debe iniciar sesión.', 'error')
             return render_template(f'{PATH_URL_LOGIN}/base_login.html')
-#--------------------- metodo de graficas ----------------------
-
-@app.route('/lista-de-graficas')
-def lista_de_graficas():
-    if 'conectado' in session:
-        # Simulación de datos de sesión para dataLogin
-        dataLogin = {
-            "id": session.get("id"),
-            "rol": session.get("rol"),  # Asegúrate de que 'rol' esté en la sesión
-        }
-        return render_template('public/grafica/lista_graficas.html', dataLogin=dataLogin)
-    else:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('loginCliente'))
-    #-----------------------------------------------------------
-@app.route('/grafica_roles_datos', methods=['GET'])
-def grafica_roles_datos():
-    try:
-        roles = obtenerroles()  # Llama a la función que obtiene los datos de roles
-        nombres = [rol['nombre_rol'] for rol in roles]
-        return jsonify({"nombres": nombres})  # Devuelve solo los nombres de los roles
-    except Exception as e:
-        print(f"Error en grafica_roles_datos: {e}")
-        return jsonify({"error": "Error al obtener los datos"}), 500
-    
-    #--------------------- areas -----------------------------------
-@app.route('/grafica_areas_datos', methods=['GET'])
-def grafica_areas_datos():
-    try:
-        areas = obtener_areas()  # Llama a la función que obtiene los datos de las áreas
-        nombres = [area['nombre_area'] for area in areas]
-        cantidades = [area['numero_personas'] for area in areas]
-        return jsonify({"nombres": nombres, "cantidades": cantidades})  # Devuelve los datos en formato JSON
-    except Exception as e:
-        print(f"Error en grafica_areas_datos: {e}")
-        return jsonify({"error": "Error al obtener los datos"}), 500
-    #-------------------------------- accesos a datos--------------------
-@app.route('/grafica_accesos_datos', methods=['GET'])
-def grafica_accesos_datos():
-    try:
-        # Obtener las fechas de los parámetros de la URL
-        fecha_inicio = request.args.get('fecha_inicio')
-        fecha_fin = request.args.get('fecha_fin')
-
-        if not fecha_inicio or not fecha_fin:
-            return jsonify({"error": "Debe proporcionar las fechas de inicio y fin"}), 400
-
-        accesos = obtener_accesos_por_fecha(fecha_inicio, fecha_fin)
-        claves = [acceso['clave'] for acceso in accesos]
-        cantidades = [acceso['cantidad'] for acceso in accesos]
-
-        return jsonify({"claves": claves, "cantidades": cantidades})
-    except Exception as e:
-        print(f"Error en grafica_accesos_datos: {e}")
-        return jsonify({"error": "Error al obtener los datos"}), 500
-    #------------------------ acesso de datos por usuario---------------------
-@app.route('/obtener_nombres_usuarios', methods=['GET'])
-def obtener_nombres_usuarios():
-    try:
-        # Consultar los nombres de los usuarios
-        with connectionBD() as conexion_MYSQLdb:
-            with conexion_MYSQLdb.cursor(dictionary=True) as cursor:
-                query = "SELECT nombre_usuario FROM usuarios ORDER BY nombre_usuario ASC"
-                cursor.execute(query)
-                usuarios = cursor.fetchall()
-
-        # Preparar los datos para el frontend
-        nombres = [usuario['nombre_usuario'] for usuario in usuarios]
-
-        return jsonify({"nombres": nombres})
-    except Exception as e:
-        print(f"Error en obtener_nombres_usuarios: {e}")
-        return jsonify({"error": "Error al obtener los nombres de los usuarios"}), 500
-    
-@app.route('/grafica_fechas_usuario_datos', methods=['GET'])
 
 
-#---------------------------------------------------------------------
-def grafica_fechas_usuario_datos():
-    try:
-        # Obtener el nombre del usuario de los parámetros de la URL
-        nombre_usuario = request.args.get('nombre_usuario')
-
-        if not nombre_usuario:
-            return jsonify({"error": "Debe proporcionar el nombre del usuario"}), 400
-
-        # Consultar las fechas de acceso del usuario
-        with connectionBD() as conexion_MYSQLdb:
-            with conexion_MYSQLdb.cursor(dictionary=True) as cursor:
-                query = """
-                    SELECT a.fecha
-                    FROM accesos a
-                    INNER JOIN usuarios u ON a.id_usuario = u.id_usuario
-                    WHERE u.nombre_usuario = %s
-                    ORDER BY a.fecha ASC
-                """
-                cursor.execute(query, (nombre_usuario,))
-                accesos = cursor.fetchall()
-
-        # Preparar los datos para la gráfica
-        fechas = [acceso['fecha'] for acceso in accesos]
-
-        return jsonify({"fechas": fechas})
-    except Exception as e:
-        print(f"Error en grafica_fechas_usuario_datos: {e}")
-        return jsonify({"error": "Error al obtener los datos"}), 500
