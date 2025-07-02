@@ -1,0 +1,323 @@
+/* ==============================================
+    LIBROPOLI - Sistema de Gestión de Biblioteca
+    Sidebar CSS Personalizado
+    ============================================== */
+
+:root {
+    --libropoli-gold: #d97706;
+    --libropoli-gold-light: #f59e0b;
+    --libropoli-gold-dark: #b45309;
+    --libropoli-bronze: #a16207;
+    --libropoli-cream: #fef3c7;
+    --libropoli-cream-light: #fffbeb;
+    --libropoli-brown: #78350f;
+    --libropoli-brown-light: #92400e;
+    --libropoli-white: #ffffff;
+    --libropoli-gray-50: #f9fafb;
+    --libropoli-gray-100: #f3f4f6;
+    --libropoli-gray-200: #e5e7eb;
+    --libropoli-gray-600: #4b5563;
+    --libropoli-gray-800: #1f2937;
+    --libropoli-gray-900: #111827;
+    --libropoli-success: #10b981;
+    --libropoli-danger: #ef4444;
+    --libropoli-warning: #f59e0b;
+    --libropoli-info: #3b82f6;
+}
+
+/* Reset y configuración base */
+
+.layout-menu, .menu-vertical {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    z-index: 1000;
+}
+
+.layout-menu {
+    background-color: var(--libropoli-white);
+    border-right: 1px solid var(--libropoli-gray-200);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    /* Optimizar para animaciones suaves */
+    will-change: transform;
+}
+
+/* Header de la aplicación */
+.app-brand {
+    padding: 24px;
+    border-bottom: 1px solid var(--libropoli-gray-100);
+    background: linear-gradient(135deg, var(--libropoli-cream-light) 0%, var(--libropoli-white) 100%);
+}
+
+.app-brand-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    gap: 12px;
+    transition: transform 0.2s ease;
+}
+
+.app-brand-link:hover {
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+
+.app-brand-logo {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--libropoli-gold) 0%, var(--libropoli-gold-light) 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--libropoli-white);
+    font-size: 20px;
+    box-shadow: 0 2px 4px rgba(217, 119, 6, 0.3);
+}
+
+.app-brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.app-brand-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--libropoli-gold);
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+}
+
+.app-brand-subtitle {
+    font-size: 13px;
+    color: var(--libropoli-gray-600);
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+.menu-inner {
+    flex: 1;
+    padding: 24px 0;
+    list-style: none;
+    margin: 0;
+}
+
+.menu-title-section {
+    margin-bottom: 12px;
+}
+
+.menu-title-section:not(:first-child) {
+    margin-top: 32px;
+}
+
+.menu-title-section span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--libropoli-gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0 12px;
+    display: block;
+}
+
+.section-divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, var(--libropoli-gray-200) 0%, transparent 100%);
+    margin: 8px 0 12px 0;
+}
+
+.menu-item {
+    margin-bottom: 4px;
+    /* Añadir transición para margin-bottom si alguna vez lo cambias,
+       aunque no está directamente relacionado con el problema de "movimiento" aquí. */
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    text-decoration: none;
+    color: var(--libropoli-gray-800);
+    border-radius: 8px;
+    /* Transición más suave para todas las propiedades relevantes */
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    font-weight: 500;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+    /* Optimizar para animaciones suaves */
+    will-change: transform, background-color, color;
+}
+
+.menu-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--libropoli-gold) 0%, var(--libropoli-gold-light) 100%);
+    /* Haz esta transición más rápida o instantánea para una sensación más ágil */
+    transition: width 0.15s ease; /* Reducido de 0.3s */
+    z-index: -1;
+}
+
+.menu-link:hover {
+    background-color: var(--libropoli-gray-50);
+    color: var(--libropoli-gold);
+    text-decoration: none;
+    transform: translateX(4px); /* Aquí es de donde viene el breve desplazamiento horizontal */
+}
+
+.menu-link:hover::before {
+    width: 4px;
+}
+
+.menu-item.active .menu-link {
+    background: linear-gradient(135deg, var(--libropoli-gold) 0%, var(--libropoli-gold-light) 100%);
+    color: var(--libropoli-white);
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
+    transform: translateX(0); /* Asegura que no haya desplazamiento horizontal cuando esté activo */
+}
+
+.menu-item.active .menu-link::before {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    /* Para el estado activo, haz que la transición de ::before sea instantánea o muy rápida para evitar el "deslizamiento" */
+    transition: width 0.05s ease; /* Casi instantáneo */
+}
+
+
+.menu-item.active .menu-link:hover {
+    background: linear-gradient(135deg, var(--libropoli-gold-dark) 0%, var(--libropoli-gold) 100%);
+    color: var(--libropoli-white);
+    transform: translateX(0); /* Mantenlo en 0px cuando el mouse esté sobre el elemento activo */
+}
+
+.menu-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.menu-link div {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Sección de cerrar sesión */
+.menu-divider {
+    margin: 24px 0 16px 0;
+}
+
+.menu-item.logout .menu-link {
+    color: var(--libropoli-danger);
+    border: 1px solid transparent;
+}
+
+.menu-item.logout .menu-link:hover {
+    background-color: #fef2f2;
+    color: var(--libropoli-danger);
+    border-color: #fecaca;
+    transform: translateX(4px);
+}
+
+.menu-item.logout .menu-link:hover::before {
+    width: 4px;
+    background: var(--libropoli-danger);
+}
+
+/* Scrollbar personalizado */
+.layout-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.layout-menu::-webkit-scrollbar-track {
+    background: var(--libropoli-gray-50);
+}
+
+.layout-menu::-webkit-scrollbar-thumb {
+    background: var(--libropoli-gray-200);
+    border-radius: 3px;
+}
+
+.layout-menu::-webkit-scrollbar-thumb:hover {
+    background: var(--libropoli-gold);
+}
+
+/* Animaciones adicionales (las tuyas existentes) */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Estados de focus para accesibilidad */
+.menu-link:focus {
+    outline: 2px solid var(--libropoli-gold);
+    outline-offset: 2px;
+}
+
+/* Loading spinner personalizado (el tuyo existente) */
+.loading-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px; /* Ayuda a prevenir cambios de diseño */
+    color: var(--libropoli-gold);
+    font-size: 16px;
+}
+
+.loading-spinner::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--libropoli-cream);
+    border-top: 2px solid var(--libropoli-gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Prevenir FOUC (Flash of Unstyled Content) - El tuyo existente */
+/* Este atributo específico `data-loading` debe aplicarse dinámicamente a través de JavaScript. */
+/* Podrías aplicarlo al área de contenido principal o al body. */
+[data-loading="true"] {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Consideración adicional para el área de contenido */
+.content-area { /* Asumiendo que tienes un div para el área de contenido principal */
+    min-height: calc(100vh - 100px); /* Ajusta esto según la altura de tu encabezado/pie de página */
+    /* Esto asegura que el área de contenido mantenga una altura mínima,
+       reduciendo los cambios de diseño cuando se carga nuevo contenido. */
+}
+
+
+
+
+
+
+
