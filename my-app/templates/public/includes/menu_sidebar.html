@@ -1,4 +1,3 @@
-<!-- Reemplaza todo el contenido con este código optimizado para Flask -->
 <aside id="layout-menu" class="layout-menu menu-vertical">
     <div class="app-brand">
         <a href="{{ url_for('inicio') }}" class="app-brand-link">
@@ -18,20 +17,21 @@
             <span>GENERAL</span>
             <hr class="section-divider" />
         </li>
-
+        {% if dataLogin.rol == 1 %}
         <li class="menu-item {% if request.path == '/lista-de-usuarios' %} active {% endif %}">
             <a href="/lista-de-usuarios" class="menu-link">
                 <i class="menu-icon bi bi-people-fill"></i>
                 <div>Lista de Usuarios</div>
             </a>
         </li>
-
+        {%endif%} {% if dataLogin.rol == 1 %}
         <li class="menu-item {% if request.path == '/interfaz-clave' %} active {% endif %}">
             <a href="/interfaz-clave" class="menu-link">
                 <i class="menu-icon bi bi-person-fill-lock"></i>
                 <div>Generar Clave</div>
             </a>
         </li>
+        {%endif%} 
 
         <li class="menu-item {% if request.path == '/reporte-accesos' %} active {% endif %}">
             <a href="/reporte-accesos" class="menu-link">
@@ -49,49 +49,8 @@
 
         <li class="menu-item {% if request.path == '/ingresar-clave' %} active {% endif %}">
             <a href="/ingresar-clave" class="menu-link">
-            <i class="menu-icon bi bi-file-lock-fill"></i>
+            <i class="menu-icon bi 	bi-shield-lock-fill"></i>
             <div>colocar clave</div>
-            </a>
-        </li>
-        
-
-        <!-- GESTIÓN DE BIBLIOTECA -->
-        <li class="menu-title-section">
-            <span>GESTIÓN DE BIBLIOTECA</span>
-            <hr class="section-divider" />
-        </li>
-
-        <li class="menu-item {% if request.path == '/lista-de-libros1' %} active {% endif %}">
-            <a href="/lista-de-libros1" class="menu-link">
-                <i class="menu-icon bi bi-book-half"></i>
-                <div>Lista Libros</div>
-            </a>
-        </li>
-
-        <!-- SENSORES Y MONITOREO -->
-        <li class="menu-title-section">
-            <span>SENSORES Y MONITOREO</span>
-            <hr class="section-divider" />
-        </li>
-
-        <li class="menu-item {% if request.path == '/temperatura' %} active {% endif %}">
-            <a href="/temperatura" class="menu-link">
-                <i class="menu-icon bi bi-thermometer-half"></i>
-                <div>Temperatura</div>
-            </a>
-        </li>
-
-        <li class="menu-item {% if request.path == '/sensor-humo' %} active {% endif %}">
-            <a href="/sensor-humo" class="menu-link">
-                <i class="menu-icon bi bi-cloud-fog2-fill"></i>
-                <div>Sensor de Humo</div>
-            </a>
-        </li>
-
-        <li class="menu-item {% if request.path == '/accesos-rfid' %} active {% endif %}">
-            <a href="/accesos-rfid" class="menu-link">
-                <i class="menu-icon bi bi-credit-card-fill"></i>
-                <div>Accesos RFID</div>
             </a>
         </li>
 

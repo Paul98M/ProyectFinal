@@ -9,6 +9,8 @@ body {
   font-size: 20px;
 }
 
+
+
 /*Inicio del loader */
 #loader-out {
   background-color: #cecece;
@@ -80,9 +82,6 @@ body {
   font-size: 17px;
 }
 
-.menu-vertical .app-brand {
-  padding-left: 15px !important;
-}
 
 .btnMovil {
   display: flex;
@@ -98,12 +97,7 @@ body {
   border-radius: 50%;
 }
 
-.menu-vertical,
-.menu-vertical .menu-block,
-.menu-vertical .menu-inner > .menu-item,
-.menu-vertical .menu-inner > .menu-header {
-  width: 20.25rem !important;
-}
+
 
 .noLeido {
   color: #272e37;
@@ -166,15 +160,7 @@ tbody tr:hover {
   border-color: #198754 !important;
 }
 
-.menu-vertical .menu-inner > .menu-item .menu-link {
-  margin: 0 !important;
-}
-.menu-vertical,
-.menu-vertical .menu-block,
-.menu-vertical .menu-inner > .menu-item,
-.menu-vertical .menu-inner > .menu-header {
-  width: 17.25rem !important;
-}
+
 
 @media (min-width: 1400px) {
   .container-xxl,
@@ -187,9 +173,7 @@ tbody tr:hover {
   }
 }
 
-.menu-vertical .menu-item.active:not(.open) > .menu-link {
-  font-size: 14px !important;
-}
+
 
 .alert-success {
   background-color: #48c808 !important;
@@ -237,4 +221,428 @@ tbody tr:hover {
 
 .acceso {
   line-height: 18px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Generar Clave Styles */
+
+.main-content {
+  padding: 20px;
+}
+
+.content-card {
+  background: var(--libropoli-white);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.section-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--libropoli-gold), var(--libropoli-gold-light));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  color: white;
+  font-size: 24px;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--libropoli-brown);
+  margin: 0;
+}
+
+.subtitle {
+  color: var(--libropoli-gray-600);
+  margin: 0;
+  font-size: 14px;
+}
+
+.two-column-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+/* Form Section */
+.form-section {
+  background: var(--libropoli-cream-light);
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid var(--libropoli-cream);
+}
+
+.form-section h3 {
+  color: var(--libropoli-brown);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.form-section h3 i {
+  margin-right: 10px;
+  color: var(--libropoli-gold);
+}
+
+.user-select-section {
+  margin-bottom: 25px;
+}
+
+.user-select-section label {
+  font-weight: 500;
+  color: var(--libropoli-brown);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.user-dropdown {
+  border: 1px solid var(--libropoli-gray-200);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--libropoli-white);
+  color: var(--libropoli-gray-800);
+  font-size: 14px;
+  width: 100%;
+}
+
+.user-dropdown:focus {
+  border-color: var(--libropoli-gold);
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+  outline: none;
+}
+
+.user-info-box {
+  background: var(--libropoli-cream);
+  border: 1px solid var(--libropoli-gold-light);
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.user-info-title {
+  font-weight: 600;
+  color: var(--libropoli-brown);
+  margin-bottom: 10px;
+}
+
+.user-info-item {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.user-info-label {
+  font-weight: 500;
+  color: var(--libropoli-brown);
+}
+
+.user-role-badge {
+  background: var(--libropoli-gold);
+  color: var(--libropoli-white);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.btn-generate {
+  background: linear-gradient(135deg, var(--libropoli-gold), var(--libropoli-gold-light));
+  border: none;
+  color: var(--libropoli-white);
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  width: 100%;
+  transition: all 0.2s;
+  margin-top: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-generate:hover {
+  background: linear-gradient(135deg, var(--libropoli-gold-dark), var(--libropoli-gold));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+}
+
+/* Key Section */
+.key-section {
+  background: var(--libropoli-white);
+  border: 1px solid var(--libropoli-gray-200);
+  border-radius: 12px;
+  padding: 25px;
+}
+
+.key-section h3 {
+  color: var(--libropoli-brown);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.key-section h3 i {
+  margin-right: 10px;
+  color: var(--libropoli-gold);
+}
+
+.success-message {
+  background: var(--libropoli-success);
+  color: var(--libropoli-white);
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.success-message i {
+  margin-right: 8px;
+}
+
+.key-label {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: var(--libropoli-gray-600);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.key-display {
+  display: flex;
+  align-items: center;
+  background: var(--libropoli-cream-light);
+  border: 2px solid var(--libropoli-gold-light);
+  border-radius: 8px;
+  padding: 0;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.key-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 15px;
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--libropoli-brown);
+  letter-spacing: 2px;
+  text-align: center;
+  outline: none;
+}
+
+.btn-toggle {
+  background: var(--libropoli-gold);
+  border: none;
+  color: var(--libropoli-white);
+  padding: 15px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-toggle:hover {
+  background: var(--libropoli-gold-dark);
+}
+
+.instructions-box {
+  background: linear-gradient(135deg, var(--libropoli-info), #1d4ed8);
+  color: var(--libropoli-white);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.instructions-title {
+  font-weight: 600;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.instructions-title i {
+  margin-right: 8px;
+}
+
+.instruction-item {
+  margin-bottom: 8px;
+  font-size: 14px;
+  padding-left: 15px;
+  position: relative;
+}
+
+.instruction-item:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+}
+
+.btn-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-copy {
+  background: var(--libropoli-white);
+  border: 1px solid var(--libropoli-gray-200);
+  color: var(--libropoli-brown);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  flex: 1;
+  transition: all 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-copy:hover {
+  background: var(--libropoli-gray-50);
+  border-color: var(--libropoli-gold);
+}
+
+.btn-copy.copied {
+  background: var(--libropoli-success);
+  border-color: var(--libropoli-success);
+  color: var(--libropoli-white);
+}
+
+.btn-new {
+  background: var(--libropoli-gold);
+  border: none;
+  color: var(--libropoli-white);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  flex: 1;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-new:hover {
+  background: var(--libropoli-gold-dark);
+}
+
+.no-key-content {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.no-key-icon {
+  font-size: 48px;
+  color: var(--libropoli-gray-200);
+  margin-bottom: 15px;
+  display: block;
+}
+
+.no-key-text {
+  color: var(--libropoli-gray-600);
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .two-column-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .main-content {
+    padding: 15px;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .section-icon {
+    margin-right: 0;
+  }
+}
+
+
+
+
+
+/* Mejora el aspecto del select */
+.form-control {
+  border-radius: 8px;
+  border: 1.5px solid #f7c873;
+  font-size: 1.08rem;
+  padding: 10px 14px;
+  background: #fffbe9;
+  color: #333;
+  transition: border-color 0.2s;
+}
+.form-control:focus {
+  border-color: #ffb300;
+  box-shadow: 0 0 0 2px #ffe0a3;
+}
+
+/* Opciones del select (solo algunos navegadores lo aplican) */
+.form-control option {
+  padding: 8px 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* Mejora la visualización de los datos seleccionados */
+.mt-3 p {
+  margin-bottom: 6px;
+  font-size: 1.05rem;
+}
+.badge.bg-warning {
+  background: #ffb300 !important;
+  color: #fff !important;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 3px 10px;
 }
