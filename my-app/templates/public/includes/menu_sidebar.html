@@ -1,68 +1,125 @@
 <aside id="layout-menu" class="layout-menu menu-vertical">
-    <div class="app-brand">
-        <a href="{{ url_for('inicio') }}" class="app-brand-link">
-            <div class="app-brand-logo">
-                <i class="bi bi-book"></i>
-            </div>
-            <div class="app-brand-text">
-                <span class="app-brand-title">LIBROPOLI</span>
-                <span class="app-brand-subtitle">Sistema de Gestión</span>
-            </div>
-        </a>
-    </div>
+  <div class="app-brand">
+    <a href="{{ url_for('inicio') }}" class="app-brand-link">
+      <div class="app-brand-logo">
+        <i class="bi bi-book"></i>
+      </div>
+      <div class="app-brand-text">
+        <span class="app-brand-title">LIBROPOLI</span>
+        <span class="app-brand-subtitle">Sistema de Gestión</span>
+      </div>
+    </a>
+  </div>
 
-    <ul class="menu-inner">
-        <!-- GENERAL -->
-        <li class="menu-title-section">
-            <span>GENERAL</span>
-            <hr class="section-divider" />
-        </li>
-        {% if dataLogin.rol == 1 %}
-        <li class="menu-item {% if request.path == '/lista-de-usuarios' %} active {% endif %}">
-            <a href="/lista-de-usuarios" class="menu-link">
-                <i class="menu-icon bi bi-people-fill"></i>
-                <div>Lista de Usuarios</div>
-            </a>
-        </li>
-        {%endif%} {% if dataLogin.rol == 1 %}
-        <li class="menu-item {% if request.path == '/interfaz-clave' %} active {% endif %}">
-            <a href="/interfaz-clave" class="menu-link">
-                <i class="menu-icon bi bi-person-fill-lock"></i>
-                <div>Generar Clave</div>
-            </a>
-        </li>
-        {%endif%} 
+  <ul class="menu-inner">
+    <!-- GENERAL -->
+    <li class="menu-title-section">
+      <span>GENERAL</span>
+      <hr class="section-divider" />
+    </li>
+    {% if dataLogin.rol == 1 %}
+    <li
+      class="menu-item {% if request.path == '/lista-de-usuarios' %} active {% endif %}"
+    >
+      <a href="/lista-de-usuarios" class="menu-link">
+        <i class="menu-icon bi bi-people-fill"></i>
+        <div>Lista de Usuarios</div>
+      </a>
+    </li>
+    {%endif%} {% if dataLogin.rol == 1 %}
+    <li
+      class="menu-item {% if request.path == '/interfaz-clave' %} active {% endif %}"
+    >
+      <a href="/interfaz-clave" class="menu-link">
+        <i class="menu-icon bi bi-person-fill-lock"></i>
+        <div>Generar Clave</div>
+      </a>
+    </li>
+    {%endif%}
 
-        <li class="menu-item {% if request.path == '/reporte-accesos' %} active {% endif %}">
-            <a href="/reporte-accesos" class="menu-link">
-                <i class="menu-icon bi bi-file-lock-fill"></i>
-                <div>Reporte Accesos</div>
-            </a>
-        </li>
+    <li
+      class="menu-item {% if request.path == '/reporte-accesos' %} active {% endif %}"
+    >
+      <a href="/reporte-accesos" class="menu-link">
+        <i class="menu-icon bi bi-file-lock-fill"></i>
+        <div>Reporte Accesos</div>
+      </a>
+    </li>
 
-        <li class="menu-item {% if request.path == '/mi-perfil/{{dataLogin.id}}' %} active {% endif %}">
-            <a href="/mi-perfil/{{dataLogin.id}}" class="menu-link">
-                <i class="menu-icon bi bi-person-fill-gear"></i>
-                <div>Mi perfil</div>
-            </a>
-        </li>
+    <li
+      class="menu-item {% if request.path == '/mi-perfil/{{dataLogin.id}}' %} active {% endif %}"
+    >
+      <a href="/mi-perfil/{{dataLogin.id}}" class="menu-link">
+        <i class="menu-icon bi bi-person-fill-gear"></i>
+        <div>Mi perfil</div>
+      </a>
+    </li>
 
-        <li class="menu-item {% if request.path == '/ingresar-clave' %} active {% endif %}">
-            <a href="/ingresar-clave" class="menu-link">
-            <i class="menu-icon bi 	bi-shield-lock-fill"></i>
-            <div>colocar clave</div>
-            </a>
-        </li>
+    <li
+      class="menu-item {% if request.path == '/ingresar-clave' %} active {% endif %}"
+    >
+      <a href="/ingresar-clave" class="menu-link">
+        <i class="menu-icon bi bi-shield-lock-fill"></i>
+        <div>colocar clave</div>
+      </a>
+    </li>
 
-        <!-- Cerrar Sesión -->
-        <li class="menu-divider">
-        </li>
+    <!--GESTIÓN DE BIBLIOTECA -->
+    <li class="menu-title-section">
+      <span>GESTIÓN DE BIBLIOTECA</span>
+      <hr class="section-divider" />
+    </li>
 
-        <li class="menu-item logout">
-            <a href="{{ url_for('cerraSesion') }}" class="menu-link">
-                <i class="menu-icon bi bi-box-arrow-right"></i>
-                <div>Cerrar Sesión</div>
-            </a>
-        </li>
-    </ul>
+    <li
+      class="menu-item {% if request.path == '/lista-de-libros1' %} active {% endif %}"
+    >
+      <a href="/lista-de-libros1" class="menu-link">
+        <i class="menu-icon bi bi-book-half"></i>
+        <div>Lista Libros</div>
+      </a>
+    </li>
+
+    <!--SENSORES Y MONITOREO-->
+    <li class="menu-title-section">
+      <span>SENSORES Y MONITOREO</span>
+      <hr class="section-divider" />
+    </li>
+
+    <li
+      class="menu-item {% if request.path == '/temperatura' %} active {% endif %}"
+    >
+      <a href="/temperatura" class="menu-link">
+        <i class="menu-icon bi bi-thermometer-half"></i>
+        <div>Temperatura</div>
+      </a>
+    </li>
+
+    <li
+      class="menu-item {% if request.path == '/sensor-humo' %} active {% endif %}"
+    >
+      <a href="/sensor-humo" class="menu-link">
+        <i class="menu-icon bi bi-cloud-fog2-fill"></i>
+        <div>Sensor de Humo</div>
+      </a>
+    </li>
+
+    <li
+      class="menu-item {% if request.path == '/accesos-rfid' %} active {% endif %}"
+    >
+      <a href="/accesos-rfid" class="menu-link">
+        <i class="menu-icon bi bi-credit-card-fill"></i>
+        <div>Accesos RFID</div>
+      </a>
+    </li>
+
+    <!-- Cerrar Sesión -->
+    <li class="menu-divider"></li>
+
+    <li class="menu-item logout">
+      <a href="{{ url_for('cerraSesion') }}" class="menu-link">
+        <i class="menu-icon bi bi-box-arrow-right"></i>
+        <div>Cerrar Sesión</div>
+      </a>
+    </li>
+  </ul>
 </aside>

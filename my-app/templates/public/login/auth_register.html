@@ -15,9 +15,21 @@
               <hr />
             </div>
           </div>
+          <!-- Bloque para mostrar mensajes flash -->
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
 
           <form
             class="mb-3"
+            id="registerForm"
             action="{{ url_for('cpanelRegisterUserBD') }}"
             method="POST">
             <div class="mb-3">
@@ -54,7 +66,6 @@
                   required
                   autofocus />
               </div>
-
             </div>
             
             <div class="row">
@@ -76,7 +87,6 @@
               </div>
             </div>
 
-            
             <div class="mb-3 form-password-toggle mt-3">
               <label class="form-label" for="pass_user">Clave</label>
               <div class="input-group input-group-merge">
@@ -92,6 +102,7 @@
                   <i class="bx bx-hide"></i>
                 </span>
               </div>
+              <div id="passwordHelp" class="form-text text-danger d-none"></div>
             </div>
             <button class="btn btn-primary w-100">
               Crear cuenta
@@ -113,4 +124,22 @@
   </div>
 </div>
 
+<script>
+// Validación de contraseña segura en el frontend
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+  const password = document.getElementById('pass_user').value;
+  const help = document.getElementById('passwordHelp');
+  // Al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+  if (!regex.test(password)) {
+    help.textContent = 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.';
+    help.classList.remove('d-none');
+    e.preventDefault();
+  } else {
+    help.classList.add('d-none');
+  }
+});
+</script>
+
 {% endblock %}
+

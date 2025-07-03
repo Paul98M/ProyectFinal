@@ -52,12 +52,16 @@ def validarDataRegisterLogin(cedula, name, surname, pass_user):
                     flash('por favor llene los campos del formulario.', 'error')
                     return False
                 else:
+                    # Validación de contraseña segura
+                    regex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$'
+                    if not re.match(regex, pass_user):
+                        flash('La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.', 'error')
+                        return False
                     # La cuenta no existe y los datos del formulario son válidos, puedo realizar el Insert
                     return True
     except Exception as e:
         print(f"Error en validarDataRegisterLogin : {e}")
         return []
-
 
 def info_perfil_session(id):
     print(id)
