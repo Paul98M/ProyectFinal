@@ -333,11 +333,10 @@ def tarjeta():
         return []
 
 
-
-
-
 from datetime import datetime, timedelta
 
+# ==========================================================
+# Inserta una nueva clave temporal con tiempo de expiración en 2 minutos
 def guardarClaveAuditoria(clave, id_usuario):
     tiempo_actual = datetime.now()
     vence_en = tiempo_actual + timedelta(minutes=2)  # ⚠️ Aquí defines los 2 minutos
@@ -349,6 +348,8 @@ def guardarClaveAuditoria(clave, id_usuario):
             """, (clave, id_usuario, tiempo_actual, vence_en))
             conexion_MYSQLdb.commit()
 
+# ====================================================
+# FUNCIÓN: MARCAR CLAVE TEMPORAL COMO USADA POR SU ID
 
 def marcarClaveComoUsada(id_clave):
     with connectionBD() as conexion_MYSQLdb:
@@ -358,6 +359,8 @@ def marcarClaveComoUsada(id_clave):
             """, (id_clave,))
             conexion_MYSQLdb.commit()
 
+# ===============================================
+# FUNCIÓN: REGISTRAR ACCESO DE USUARIO CON CLAVE
 def registrarAcceso(id_usuario, clave):
     with connectionBD() as conexion_MYSQLdb:
         with conexion_MYSQLdb.cursor() as cursor:
@@ -366,7 +369,9 @@ def registrarAcceso(id_usuario, clave):
                 VALUES (NOW(), %s, %s)
             """, (clave, id_usuario))
             conexion_MYSQLdb.commit()
-
+    
+# ==========================================================
+# Consulta usuarios junto con el nombre de su rol desde la base de datos
 def obtenerUsuarios():
     with connectionBD() as conexion_MYSQLdb:
         with conexion_MYSQLdb.cursor(dictionary=True) as cursor:
@@ -378,9 +383,8 @@ def obtenerUsuarios():
             usuarios = cursor.fetchall()
             return usuarios
         
-
-from datetime import datetime
-
+# ============================================================
+# FUNCIÓN: VALIDAR CLAVE TEMPORAL NO USADA Y NO VENCIDA POR CÉDULA
 def validarClaveTemporal(clave_ingresada, cedula_usuario):
     with connectionBD() as conexion_MYSQLdb:
         with conexion_MYSQLdb.cursor(dictionary=True) as cursor:
@@ -402,9 +406,8 @@ def validarClaveTemporal(clave_ingresada, cedula_usuario):
             else:
                 return None
 
-
-from datetime import datetime, timedelta
-
+# =========================================================
+# Inserta una clave temporal válida por 2 minutos en la base de datos
 def guardarClaveTemporal(clave, id_usuario):
     vence_en = datetime.now() + timedelta(minutes=2)  # Clave válida por 2 minutos
     try:
