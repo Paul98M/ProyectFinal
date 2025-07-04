@@ -1,95 +1,214 @@
-{% extends 'public/base_cpanel.html' %}
-<!---->
-{% block title %}Crear Clave{% endblock %} {% block customCSS %}
-<style>
-  /* Tu código CSS personalizado va aquí */
-  .contenedor {
-    border-style: solid;
-    border-color: rgba(128, 128, 128, 0.3);
-    border-width: 1px;
-    border-radius: 5px;
-  }
-  .campo_clave input {
-    float: left;
-    width: 95%;
-  }
-  .campo_clave button {
-    width: 5%;
-  }
-</style>
-{% endblock %}
-<!---->
-{% block body %}
-<div class="container-xxl">
-  <div class="card">
-    <div class="card-body">
-      <div class="app-brand justify-content-center">
-        <span class="app-brand-logo">
-          <img
-            class="logo"
-            style="display: flex"
-            src="{{ url_for('static', filename ='./assets/img/logo.png') }}"
-            alt="Logo"
-          />
-        </span>
+{% extends 'public/base_cpanel.html' %} {% block title %}Generar Clave{%
+endblock %} {% block body %}
+<div class="main-content">
+  <div class="content-card">
+    <div class="p-4">
+      <div class="section-header">
+        <div class="section-icon">
+          <i class="bi bi-people"></i>
+        </div>
+        <div>
+          <h1 class="section-title">Seleccionar Usuario</h1>
+          <p class="subtitle">
+            Elige el usuario para quien deseas generar una clave de acceso
+          </p>
+        </div>
       </div>
 
-      <form class="mb-3" method="POST">
-        <div class="contenedor mb-3">
-          <label class="form-label"> GENERACION DE CLAVE </label>
-          <div class="campo_clave">
-            <input
-              class="form-control"
-              type="password"
-              name="clave_audi"
-              id="clave_audi"
-              readonly
-            />
+      <div class="two-column-layout">
+        <!-- Left Column - User Selection -->
+        <div class="form-section">
+          <h3>
+            <i class="bi bi-person-circle"></i>
+            Seleccionar Usuario
+          </h3>
+
+          <form class="mb-3" method="POST">
+            <div class="user-select-section mb-3">
+              <label for="usuario" class="form-label">Usuario</label>
+              <select
+                class="form-select user-dropdown"
+                id="usuario"
+                onchange="mostrarDatosUsuario(this)"
+              >
+                <option value="">Seleccionar usuario...</option>
+                {% for u in usuarios %}
+                <option
+                  value="{{ u.id_usuario }}"
+                  data-nombre="{{ u.nombre_usuario }}"
+                  data-cedula="{{ u.cedula }}"
+                  data-rol="{{ u.nombre_rol }}"
+                >
+                  {{ u.nombre_usuario }} - {{ u.cedula }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="user-info-box mb-3">
+              <div class="user-info-title fw-bold mb-2">
+                Usuario Seleccionado:
+              </div>
+              <div class="user-info-item mb-1">
+                <span class="user-info-label">Nombre:</span>
+                <span id="nombreUsuario"></span>
+              </div>
+              <div class="user-info-item mb-1">
+                <span class="user-info-label">Cédula:</span>
+                <span id="cedulaUsuario"></span>
+              </div>
+              <div class="user-info-item">
+                <span class="user-info-label">Rol:</span>
+                <span class="user-role-badge" id="rolUsuario"></span>
+              </div>
+            </div>
+
             <button
-              class="btn btn-outline-primary"
               type="button"
-              id="togglePassword"
+              class="btn btn-primary btn-generate w-100"
+              onclick="generacionClaveSeleccionada()"
             >
-              <i class="bi bi-eye"></i>
+              <i class="bi bi-key-fill"></i>
+              Generar Clave Segura
             </button>
-          </div>
+          </form>
         </div>
 
-        <div class="mb-3">
-          <button
-            type="button"
-            class="btn btn-secondary w-100"
-            onclick="generacionClave('{{dataLogin.id}}')"
-          >
-            Generar Clave
-            <i class="bi bi-key-fill"></i>
-          </button>
+        <!-- Right Column - Generated Key -->
+        <div class="key-section">
+          <h3>
+            <i class="bi bi-shield-check"></i>
+            Clave Generada
+          </h3>
+
+          <div id="keyResult" style="display: none">
+            <div class="success-message">
+              <i class="bi bi-check-circle-fill"></i>
+              ¡Clave generada exitosamente para
+              <strong>{{dataLogin.nombre}}</strong>!
+            </div>
+
+            <div class="key-label">Clave de Acceso</div>
+            <div class="key-display">
+              <input
+                class="key-input"
+                type="password"
+                name="clave_audi"
+                id="clave_audi"
+                readonly
+              />
+              <button class="btn-toggle" type="button" id="togglePassword">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+
+            <div class="instructions-box">
+              <div class="instructions-title">
+                <i class="bi bi-info-circle"></i>
+                Instrucciones Importantes:
+              </div>
+              <div class="instruction-item">
+                Comparte esta clave de forma segura con el usuario
+              </div>
+              <div class="instruction-item">
+                La clave es válida por 24 horas
+              </div>
+              <div class="instruction-item">
+                El usuario debe usar la sección "Colocar Clave" para acceder
+              </div>
+              <div class="instruction-item">
+                Guarda un registro de esta clave para referencia
+              </div>
+            </div>
+
+            <div class="btn-actions">
+              <button type="button" class="btn-copy" onclick="copiarClave()">
+                <i class="bi bi-clipboard"></i>
+                Copiar Clave
+              </button>
+              <button type="button" class="btn-new" onclick="nuevaClave()">
+                Nueva Clave
+              </button>
+            </div>
+          </div>
+
+          <div id="noKeyMessage">
+            <div class="no-key-content">
+              <i class="bi bi-key no-key-icon"></i>
+              <p class="no-key-text">
+                La clave de acceso aparecerá aquí una vez generada
+              </p>
+            </div>
+          </div>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 </div>
 {% endblock %} {% block customJS %}
 <script>
   function generacionClave(id) {
-    fetch("/generar-y-guardar-clave/"+id) // Ruta para generar la clave
+    fetch("/generar-y-guardar-clave/" + id)
       .then((response) => response.text())
       .then((data) => {
-        document.getElementById("clave_audi").value = data.trim(); // Actualiza el valor del campo con la clave generada
+        document.getElementById("clave_audi").value = data.trim();
+        document.getElementById("noKeyMessage").style.display = "none";
+        document.getElementById("keyResult").style.display = "block";
       })
       .catch((error) => {
         console.error("Error:", error);
       });
   }
+  
 
-  // MOSTRAR Y OCULTAR CONSTRASEÑA
+  function mostrarDatosUsuario(select) {
+    const selected = select.options[select.selectedIndex];
+    document.getElementById('nombreUsuario').innerText = selected.dataset.nombre || '';
+    document.getElementById('cedulaUsuario').innerText = selected.dataset.cedula || '';
+    document.getElementById('rolUsuario').innerText = selected.dataset.rol || '';
+  }
+
+  function generacionClaveSeleccionada() {
+    const select = document.getElementById('usuario');
+    const id_usuario = select.value;
+    if (!id_usuario) {
+      alert('Selecciona un usuario');
+      return;
+    }
+    generacionClave(id_usuario); // Llama a tu función AJAX existente
+  }
+
+  // MOSTRAR Y OCULTAR CONTRASEÑA
   document
     .getElementById("togglePassword")
     .addEventListener("click", function () {
       const claveField = document.getElementById("clave_audi");
+      const icon = this.querySelector("i");
       const type =
         claveField.getAttribute("type") === "password" ? "text" : "password";
       claveField.setAttribute("type", type);
+      icon.className = type === "password" ? "bi bi-eye" : "bi bi-eye-slash";
     });
+
+  function copiarClave() {
+    const clave = document.getElementById("clave_audi").value;
+    navigator.clipboard.writeText(clave).then(() => {
+      const btn = event.target.closest("button");
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="bi bi-check"></i>¡Copiado!';
+      btn.classList.add("copied");
+
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove("copied");
+      }, 2000);
+    });
+  }
+
+  function nuevaClave() {
+    document.getElementById("noKeyMessage").style.display = "block";
+    document.getElementById("keyResult").style.display = "none";
+    document.getElementById("clave_audi").value = "";
+  }
 </script>
 {% endblock %}

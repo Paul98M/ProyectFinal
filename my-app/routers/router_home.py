@@ -56,16 +56,6 @@ def reporteAccesos():
         userData = dataLoginSesion()
         return render_template('public/perfil/reportes.html',  reportes=dataReportes(),lastAccess=lastAccessBD(userData.get('cedula')), dataLogin=dataLoginSesion())
 
-@app.route("/interfaz-clave", methods=['GET','POST'])
-def claves():
-    return render_template('public/usuarios/generar_clave.html', dataLogin=dataLoginSesion())
-    
-@app.route('/generar-y-guardar-clave/<string:id>', methods=['GET','POST'])
-def generar_clave(id):
-    print(id)
-    clave_generada = crearClave()  # Llama a la función para generar la clave
-    guardarClaveAuditoria(clave_generada,id)
-    return clave_generada
 #CREAR AREA
 @app.route('/crear-area', methods=['GET','POST'])
 def crearArea():
@@ -98,39 +88,9 @@ def updateArea():
             return "Hubo un error al actualizar el área."
 
     return redirect(url_for('lista_areas'))
-    
 
-#Datos sensor temperatura
-@app.route('/eliminar-sensor-temperatura/<int:id_sensor>', methods=['GET', 'POST'])
-def eliminar_sensor_temperatura_route(id_sensor):
-    try:
-        # Llama a la función para eliminar el registro del sensor de temperatura
-        eliminarSensorTemperatura(id_sensor)
-        flash('Registro del sensor de temperatura eliminado con éxito.', 'success')
-    except Exception as e:
-        flash(f"Error al eliminar el registro del sensor de temperatura: {e}", 'error')
-
-    # Redirige a la página principal o a donde desees después de la eliminación
-    return redirect(url_for('inicio'))
-
-#Datos tarjeta
-@app.route('/accesos-rfid', methods=['GET'])
-def tarjet():
-    if 'conectado' in session:
-        try:
-            # Obtiene los datos de los sensores de temperatura desde la base de datos
-            datos_tarjeta = tarjeta()
-
-            # Renderiza la plantilla con los datos
-            return render_template('public/sensores/TarjetaRFID.html', datos_tarjeta = tarjeta(), dataLogin=dataLoginSesion())
-        except Exception as e:
-            flash(f"Error al obtener datos registros de la tarjeta: {e}", 'error')
-            return redirect(url_for('inicio'))
-    else:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
-    
-#Datos sensor tempertura
+# ===============================================
+# MOSTRAR DATOS DEL SENSOR DE TEMPERATURA (GET)
 @app.route('/temperatura', methods=['GET'])
 def sensor_temp():
     if 'conectado' in session:
@@ -146,10 +106,22 @@ def sensor_temp():
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
-    
+# ===============================================
+# ELIMINAR SENSOR DE TEMPERATURA DESDE LA RUTA
+@app.route('/eliminar-sensor-temperatura/<int:id_sensor>', methods=['GET', 'POST'])
+def eliminar_sensor_temperatura_route(id_sensor):
+    try:
+        # Llama a la función para eliminar el registro del sensor de temperatura
+        eliminarSensorTemperatura(id_sensor)
+        flash('Registro del sensor de temperatura eliminado con éxito.', 'success')
+    except Exception as e:
+        flash(f"Error al eliminar el registro del sensor de temperatura: {e}", 'error')
 
+    # Redirige a la página principal o a donde desees después de la eliminación
+    return redirect(url_for('inicio'))
 
-#Datos sensor humo
+# ============================================
+# MOSTRAR DATOS DEL SENSOR DE HUMO (GET)
 @app.route('/sensor-humo', methods=['GET'])
 def sensor_hum():
     if 'conectado' in session:
@@ -166,7 +138,8 @@ def sensor_hum():
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
     
-#Eliminar registro sensor humo
+# ===============================================
+# ELIMINAR REGISTRO DE SENSOR DE HUMO (GET/POST)
 @app.route('/eliminar-sensor-humo/<int:id_sensor>', methods=['GET', 'POST'])
 def eliminar_sensor_humo_route(id_sensor):
     try:
@@ -179,3 +152,74 @@ def eliminar_sensor_humo_route(id_sensor):
     # Redirige a la página principal o a donde desees después de la eliminación
     return redirect(url_for('inicio'))
 
+# ============================================
+# MOSTRAR REGISTROS DE ACCESOS RFID (GET)
+@app.route('/accesos-rfid', methods=['GET'])
+def tarjet():
+    if 'conectado' in session:
+        try:
+            # Obtiene los datos de los sensores de temperatura desde la base de datos
+            datos_tarjeta = tarjeta()
+
+            # Renderiza la plantilla con los datos
+            return render_template('public/sensores/TarjetaRFID.html', datos_tarjeta = tarjeta(), dataLogin=dataLoginSesion())
+        except Exception as e:
+            flash(f"Error al obtener datos registros de la tarjeta: {e}", 'error')
+            return redirect(url_for('inicio'))
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))
+    
+# =============================
+# Obtiene lista de usuarios y renderiza la página de generación de clave (GET)
+@app.route("/interfaz-clave", methods=['GET'])
+def claves():
+    usuarios = obtenerUsuarios()  # Esta función debe retornar una lista de usuarios
+    return render_template('public/usuarios/generar_clave.html', usuarios=usuarios, dataLogin=dataLoginSesion())
+    
+# ================================
+# RUTA: VALIDAR CLAVE TEMPORAL (POST), # Obtiene clave y cédula del formulario, valida, marca como usada y registra acceso  
+@app.route('/validar-clave-temporal', methods=['POST'])
+def validar_clave_temporal():
+    clave_ingresada = request.form['clave'].strip()
+    cedula_usuario = request.form.get('cedula', '').strip()  # uso get para evitar error si no viene
+    print(">>> Clave recibida:", repr(clave_ingresada))  # DEBUG
+    if cedula_usuario:
+        print(">>> Cédula usuario:", cedula_usuario)
+    # Asumo que validarClaveTemporal acepta opcionalmente cedula_usuario
+    if cedula_usuario:
+        clave_info = validarClaveTemporal(clave_ingresada, cedula_usuario)
+    else:
+        clave_info = validarClaveTemporal(clave_ingresada)
+    print(">>> Resultado desde BD:", clave_info)  # DEBUG
+
+    if clave_info:
+        print(">>> Fecha vencimiento:", clave_info['vence_en'], "| Ahora:", datetime.now())
+        id_clave = clave_info['id_clave']
+        id_usuario = clave_info['id_usuario']
+        marcarClaveComoUsada(id_clave)
+        registrarAcceso(id_usuario, clave_ingresada)
+
+        flash("¡Acceso concedido! Clave válida.", "success")
+    else:
+        flash("Clave inválida, vencida, usada o no te pertenece.", "danger")
+    return redirect(url_for('ingresar_clave'))
+
+# ================================================
+# RUTA: GENERAR Y GUARDAR CLAVE TEMPORAL (GET/POST)
+@app.route('/generar-y-guardar-clave/<string:id>', methods=['GET','POST'])
+def generar_clave(id):
+    clave_generada = crearClave()
+    guardarClaveTemporal(clave_generada, id)  # Guarda la clave con duración de 2 minutos
+    return clave_generada
+
+# ===============================
+# Renderiza la página donde el usuario ingresa la clave temporal
+@app.route('/ingresar-clave', methods=['GET'])
+def ingresar_clave():
+    return render_template('public/usuarios/colocar_clave.html',  dataLogin=dataLoginSesion())
+
+from datetime import datetime
+print(datetime.now())
+
+datetime.now()

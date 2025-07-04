@@ -215,21 +215,7 @@ def crearClave():
     clave = ''.join(random.choice(caracteres) for _ in range(longitud))
     print("La clave generada es:", clave)
     return clave
-##GUARDAR CLAVES GENERADAS EN AUDITORIA
-def guardarClaveAuditoria(clave_audi,id):
-    try:
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as mycursor:
-                    sql = "INSERT INTO accesos (fecha, clave, id_usuario) VALUES (NOW(),%s,%s)"
-                    valores = (clave_audi,id)
-                    mycursor.execute(sql, valores)
-                    conexion_MySQLdb.commit()
-                    resultado_insert = mycursor.rowcount
-                    return resultado_insert 
-        
-    except Exception as e:
-        return f'Se produjo un error en crear Clave: {str(e)}'
-    
+
 def lista_rolesBD():
     try:
         with connectionBD() as conexion_MYSQLdb:
@@ -271,21 +257,8 @@ def actualizarArea(area_id, area_name):
     except Exception as e:
         return f'Se produjo un error al actualizar el área: {str(e)}'
     
-    #--------consulta de datos de los roles-----------:
-
-def tarjeta():
-    try:
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Modifica la consulta según la estructura de tu base de datos
-                querySQL = "SELECT nombre, tarjeta, id_usuario, fecha_hora, estado, id_area FROM tarjeta_rfid ORDER BY fecha_hora DESC"
-                cursor.execute(querySQL)
-                datos_tarjeta = cursor.fetchall()
-        return datos_tarjeta
-    except Exception as e:
-        print(f"Error al obtener registros de la tarjeta: {e}")
-        return []
-    
+# =============================================================
+# FUNCIÓN: OBTENER DATOS HISTÓRICOS DE SENSORES DE TEMPERATURA  
 def sensor_temperatura():
     try:
         with connectionBD() as conexion_MySQLdb:
@@ -299,8 +272,8 @@ def sensor_temperatura():
         print(f"Error al obtener datos de sensores de temperatura: {e}")
         return []
     
-
-#Eliminar registro sensor temperauta
+# ==========================================================
+# FUNCIÓN: ELIMINAR REGISTRO DE SENSOR DE TEMPERATURA POR ID
 def eliminarSensorTemperatura(id_sensor):
     try:
         with connectionBD() as conexion_MySQLdb:
@@ -314,6 +287,8 @@ def eliminarSensorTemperatura(id_sensor):
         print(f"Error en eliminarSensorTemperatura: {e}")
         return []
     
+# =======================================================
+# FUNCIÓN: OBTENER DATOS HISTÓRICOS DEL SENSOR DE HUMO
 def sensor_humo():
     try:
         with connectionBD() as conexion_MySQLdb:
@@ -327,7 +302,8 @@ def sensor_humo():
         print(f"Error al obtener datos de sensor de humo: {e}")
         return []
     
-#Eliminar registro sensor humo
+# ====================================================
+# FUNCIÓN: ELIMINAR REGISTRO DE SENSOR DE HUMO POR ID
 def eliminarSensorHumo(id_sensor):
     try:
         with connectionBD() as conexion_MySQLdb:
@@ -340,3 +316,108 @@ def eliminarSensorHumo(id_sensor):
     except Exception as e:
         print(f"Error en eliminarSensorHumo: {e}")
         return []
+
+# =======================================================
+# FUNCIÓN: OBTENER REGISTROS DE TARJETAS RFID DESDE BD
+def tarjeta():
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Modifica la consulta según la estructura de tu base de datos
+                querySQL = "SELECT nombre, tarjeta, id_usuario, fecha_hora, estado, id_area FROM tarjeta_rfid ORDER BY fecha_hora DESC"
+                cursor.execute(querySQL)
+                datos_tarjeta = cursor.fetchall()
+        return datos_tarjeta
+    except Exception as e:
+        print(f"Error al obtener registros de la tarjeta: {e}")
+        return []
+
+
+
+
+
+from datetime import datetime, timedelta
+
+def guardarClaveAuditoria(clave, id_usuario):
+    tiempo_actual = datetime.now()
+    vence_en = tiempo_actual + timedelta(minutes=2)  # ⚠️ Aquí defines los 2 minutos
+    with connectionBD() as conexion_MYSQLdb:
+        with conexion_MYSQLdb.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO claves_temporales (clave, id_usuario, creada_en, vence_en, usada)
+                VALUES (%s, %s, %s, %s, FALSE)
+            """, (clave, id_usuario, tiempo_actual, vence_en))
+            conexion_MYSQLdb.commit()
+
+
+def marcarClaveComoUsada(id_clave):
+    with connectionBD() as conexion_MYSQLdb:
+        with conexion_MYSQLdb.cursor() as cursor:
+            cursor.execute("""
+                UPDATE claves_temporales SET usada = TRUE WHERE id_clave = %s
+            """, (id_clave,))
+            conexion_MYSQLdb.commit()
+
+def registrarAcceso(id_usuario, clave):
+    with connectionBD() as conexion_MYSQLdb:
+        with conexion_MYSQLdb.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO accesos (fecha, clave, id_usuario) 
+                VALUES (NOW(), %s, %s)
+            """, (clave, id_usuario))
+            conexion_MYSQLdb.commit()
+
+def obtenerUsuarios():
+    with connectionBD() as conexion_MYSQLdb:
+        with conexion_MYSQLdb.cursor(dictionary=True) as cursor:
+            cursor.execute("""
+                SELECT u.id_usuario, u.nombre_usuario, u.cedula, r.nombre_rol
+                FROM usuarios u
+                JOIN rol r ON u.id_rol = r.id_rol
+            """)
+            usuarios = cursor.fetchall()
+            return usuarios
+        
+
+from datetime import datetime
+
+def validarClaveTemporal(clave_ingresada, cedula_usuario):
+    with connectionBD() as conexion_MYSQLdb:
+        with conexion_MYSQLdb.cursor(dictionary=True) as cursor:
+            cursor.execute("""
+                SELECT ct.*, u.cedula 
+                FROM claves_temporales ct
+                JOIN usuarios u ON ct.id_usuario = u.id_usuario
+                WHERE ct.clave = %s AND ct.usada = FALSE AND u.cedula = %s
+            """, (clave_ingresada, cedula_usuario))
+            
+            resultado = cursor.fetchone()
+
+            if resultado:
+                print(">>> Fecha en BD:", resultado['vence_en'], "| Fecha actual:", datetime.now())  # DEBUG
+
+            # Verifica si aún está dentro del tiempo
+            if resultado and resultado['vence_en'] > datetime.now():
+                return resultado
+            else:
+                return None
+
+
+from datetime import datetime, timedelta
+
+def guardarClaveTemporal(clave, id_usuario):
+    vence_en = datetime.now() + timedelta(minutes=2)  # Clave válida por 2 minutos
+    try:
+        with connectionBD() as conexion_MYSQLdb:
+            with conexion_MYSQLdb.cursor(dictionary=True) as cursor:
+                sql = """
+                    INSERT INTO claves_temporales (clave, id_usuario, vence_en)
+                    VALUES (%s, %s, %s)
+                """
+                valores = (clave, id_usuario, vence_en)
+                cursor.execute(sql, valores)
+                conexion_MYSQLdb.commit()
+                return cursor.rowcount
+    except Exception as e:
+        print(f"Error al guardar clave temporal: {e}")
+        return 0
