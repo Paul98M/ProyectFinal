@@ -609,3 +609,282 @@ tbody tr:hover {
 }
 
 
+
+
+
+/* Estilos adicionales para el formulario de registro */
+
+.form-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 800px;
+}
+
+.section-title {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #08b324;
+  box-shadow: 0 0 0 0.2rem rgba(8, 179, 36, 0.25);
+}
+
+.btn-primary {
+  background-color: #08b324;
+  border-color: #08b324;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #069921;
+  border-color: #069921;
+  transform: translateY(-1px);
+}
+
+/* Estilos para la sección RFID */
+.rfid-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+}
+
+.rfid-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.rfid-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.status-disconnected {
+  color: #dc3545;
+}
+
+.status-connected {
+  color: #08b324;
+}
+
+.rfid-scanner {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.scanner-card {
+  flex: 1;
+  border: 2px dashed #dee2e6;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.scanner-card.ready {
+  border-color: #dee2e6;
+  background: white;
+}
+
+.scanner-card.scanning {
+  border-color: #ffc107;
+  background: #fff8e1;
+}
+
+.scanner-card.detected {
+  border-color: #08b324;
+  background: #e8f5e8;
+}
+
+.scanner-icon {
+  font-size: 3rem;
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.scanner-icon.scanning {
+  color: #ffc107;
+  animation: pulse 1.5s infinite;
+}
+
+.scanner-icon.detected {
+  color: #08b324;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.scanner-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.scanner-subtitle {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.scanning-subtitle {
+  color: #ffc107;
+  font-weight: 600;
+}
+
+.detected-subtitle {
+  color: #08b324;
+  font-weight: 600;
+}
+
+.rfid-code {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-family: monospace;
+  font-size: 1rem;
+  color: #2c3e50;
+  margin: 1rem 0;
+}
+
+.rfid-info {
+  flex: 1;
+  padding-left: 1rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.info-value {
+  color: #6c757d;
+}
+
+.info-value.success {
+  color: #08b324;
+  font-weight: 600;
+}
+
+.btn-scan {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-scan:hover {
+  background-color: #e0a800;
+  border-color: #e0a800;
+  color: #212529;
+}
+
+.btn-scan.scanning {
+  background-color: #ffc107;
+  cursor: not-allowed;
+}
+
+.success-message {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.back-link {
+  color: #6c757d;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  transition: color 0.3s ease;
+}
+
+.back-link:hover {
+  color: #08b324;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .rfid-scanner {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .rfid-info {
+    padding-left: 0;
+  }
+  
+  .rfid-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+}

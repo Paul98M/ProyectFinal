@@ -219,7 +219,3 @@ def generar_clave(id):
 def ingresar_clave():
     return render_template('public/usuarios/colocar_clave.html',  dataLogin=dataLoginSesion())
 
-from datetime import datetime
-print(datetime.now())
-
-datetime.now()
