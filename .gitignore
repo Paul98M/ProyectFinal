@@ -1,0 +1,15 @@
+# Archivos bytecode de Python
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# Entorno virtual
+.venv/
+venv/
+env/
+
+# Ejecutables (ajusta según las necesidades de tu proyecto)
+*.exe
+*.dll
+*.so
