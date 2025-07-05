@@ -219,3 +219,108 @@ def generar_clave(id):
 def ingresar_clave():
     return render_template('public/usuarios/colocar_clave.html',  dataLogin=dataLoginSesion())
 
+
+
+
+
+# ============================================
+# SECCIÓN: BIBLIOTECA
+# SECCIÓN: BIBLIOTECA
+# SECCIÓN: BIBLIOTECA
+# ============================================
+
+
+# =====================================
+# ELIMINAR LIBRO POR ID
+# =====================================
+@app.route('/borrar-libro/<string:id>', methods=['GET'])
+def borrarLibro(id):
+    eliminado = eliminarLibro(id)
+    if eliminado:
+        flash('✅ El libro fue eliminado correctamente.', 'success')
+    else:
+        flash('❌ Hubo un error al eliminar el libro.', 'danger')
+    return redirect(url_for('libros1'))  # Asegúrate que este endpoint existe
+
+
+
+# =====================================
+# MOSTRAR FORMULARIO DE EDICIÓN DE LIBRO
+# =====================================
+@app.route("/editar-libro/<id_libro>", methods=['GET'])
+def viewEditarLibro(id_libro):
+    if 'conectado' in session:
+        libro = buscarLibroUnico(id_libro)  # <--- Cambia aquí
+        if libro:
+            return render_template('public/biblioteca/form_libro_update.html', libro=libro, dataLogin=dataLoginSesion())
+        else:
+            flash('El libro no existe.', 'error')
+            return redirect(url_for('libros1'))
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('login'))
+
+
+# =====================================
+# ACTUALIZAR DATOS DE UN LIBRO
+# =====================================
+@app.route("/actualizar-libro", methods=['POST'])
+def actualizarLibro():  
+    if request.method == 'POST':
+        try:
+            id_libro = request.form['id_libro']
+            titulo = request.form['titulo']
+            autores = request.form['autores']
+            categoria = request.form['categoria']
+            ubicacion = request.form['ubicacion']
+            cantidad_disponible = request.form.get('cantidad_disponible', 0)
+            stock_total = request.form.get('stock_total', 0)
+            anio_publicacion = request.form.get('anio_publicacion', None)
+            estado = request.form.get('estado', 'activo')
+
+            datos = {
+                'titulo': titulo,
+                'autores': autores,
+                'ubicacion': ubicacion,
+                'categoria': categoria,
+                'cantidad_disponible': cantidad_disponible,
+                'stock_total': stock_total,
+                'anio_publicacion': anio_publicacion,
+                'estado': estado
+            }
+
+            resultado_update = actualizarLibroBD(id_libro, datos)
+
+            if resultado_update:
+                flash('El libro fue actualizado correctamente.', 'success')
+                return redirect(url_for('libros1'))
+            else:
+                flash('No se realizaron cambios en el libro.', 'error')
+                return redirect(url_for('viewEditarLibro', id_libro=id_libro))
+
+        except Exception as e:
+            print(f"Error en actualizarLibro(): {e}")
+            flash('Error en el formulario de actualización.', 'error')
+            return redirect(url_for('libros1'))
+
+    else:
+        flash('Método no permitido.', 'error')
+        return redirect(url_for('libros1'))
+    
+# ------------------------------------------------------------
+# RUTA: LISTA DE LIBROS
+# ------------------------------------------------------------
+# lO MISMO DEL PRIMERO.  
+@app.route("/lista-de-libros", methods=['GET'])
+def libros1():
+    if 'conectado' in session:
+        return render_template(
+            'public/biblioteca/lista_libros.html',
+            libros=lista_librosBD(),      # <--- Cambia a 'libros'
+            dataLogin=dataLoginSesion()
+        )
+    else:
+        return redirect(url_for('inicioCpanel'))
+
+
+    

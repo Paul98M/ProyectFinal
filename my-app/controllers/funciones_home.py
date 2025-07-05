@@ -424,3 +424,130 @@ def guardarClaveTemporal(clave, id_usuario):
     except Exception as e:
         print(f"Error al guardar clave temporal: {e}")
         return 0
+    
+# ============================================================
+# FUNCIONES PARA GESTIÓN DE LIBROS EN LA BIBLIOTECA
+# Estas funciones permiten listar, buscar, editar y eliminar
+# libros en la base de datos de la biblioteca.
+# ============================================================
+
+
+
+# =====================================
+# LISTAR LIBROS DESDE LA BASE DE DATOS
+# =====================================
+def lista_librosBD():
+    """
+    Obtiene la lista de libros activos desde la base de datos,
+    con sus datos básicos según la tabla libros.
+    """
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = """
+                    SELECT
+                        id_libro,
+                        titulo,
+                        autores,
+                        ubicacion,
+                        categoria,
+                        cantidad_disponible,
+                        stock_total,
+                        anio_publicacion,
+                        estado
+                    FROM
+                        libros
+                    ORDER BY
+                        id_libro;
+                """
+                cursor.execute(querySQL)
+                librosBD = cursor.fetchall()
+        return librosBD
+    except Exception as e:
+        print(f"Error en lista_librosBD: {e}")
+        return []
+
+# =====================================
+# ELIMINAR LIBRO POR ID
+# =====================================
+def eliminarLibro(id):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = "DELETE FROM libros WHERE id_libro = %s"
+                cursor.execute(querySQL, (id,))
+                conexion_MySQLdb.commit()
+                return cursor.rowcount > 0  # Devuelve True si se eliminó algo
+    except Exception as e:
+        print(f"❌ Error al eliminar libro: {e}")
+        return False
+
+# =====================================
+# BUSCAR LIBRO POR ID (EDICIÓN)
+# =====================================
+def buscarLibroUnico(id_libro):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as mycursor:
+                querySQL = ("""
+                    SELECT 
+                        id_libro,
+                        titulo,
+                        autores,
+                        ubicacion,
+                        categoria,
+                        cantidad_disponible,
+                        stock_total,
+                        anio_publicacion,
+                        estado
+                    FROM libros
+                    WHERE id_libro = %s
+                    LIMIT 1
+                """)
+                mycursor.execute(querySQL, (id_libro,))
+                libro = mycursor.fetchone()
+                return libro
+    except Exception as e:
+        print(f"Ocurrió un error en buscarLibroUnico: {e}")
+        return None
+    
+
+
+# =====================================
+# ACTUALIZAR INFORMACIÓN DE UN LIBRO
+# =====================================
+def actualizarLibroBD(id_libro, datos):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor() as cursor:
+                query = """
+                    UPDATE libros SET
+                        titulo=%s,
+                        autores=%s,
+                        ubicacion=%s,
+                        categoria=%s,
+                        cantidad_disponible=%s,
+                        stock_total=%s,
+                        anio_publicacion=%s,
+                        estado=%s
+                    WHERE id_libro=%s
+                """
+                valores = (
+                    datos['titulo'],
+                    datos['autores'],
+                    datos['ubicacion'],
+                    datos['categoria'],
+                    datos['cantidad_disponible'],
+                    datos['stock_total'],
+                    datos['anio_publicacion'],
+                    datos['estado'],
+                    id_libro
+                )
+                print("Valores para UPDATE:", valores)
+                cursor.execute(query, valores)
+                conexion_MySQLdb.commit()
+                print("Filas actualizadas:", cursor.rowcount)
+                return cursor.rowcount > 0
+    except Exception as e:
+        print(f"Error al actualizar libro: {e}")
+        return False

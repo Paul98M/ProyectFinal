@@ -42,3 +42,6 @@ while True:
                 print(f"📭 Línea no válida: {linea}")
     except Exception as e:
         print(f"❌ Error al leer del puerto serial: {e}")
+
+
+
