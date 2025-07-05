@@ -2,6 +2,7 @@ import serial
 from datetime import datetime
 from conexionBD import connectionBD
 
+
 # Configurar puerto serial (ajusta 'COM5' según tu caso)
 puerto = serial.Serial(port='COM6', baudrate=9600, timeout=1)
 
