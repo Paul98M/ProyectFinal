@@ -888,3 +888,21 @@ tbody tr:hover {
     text-align: center;
   }
 }
+
+
+
+
+/* .btn-success {
+  color: var(--libropoli-white); /* texto blanco */
+ /*  background-color: var(--libropoli-warning); /* #f59e0b */
+ /*  border-color: var(--libropoli-brown-light); /* #92400e */
+ /*  box-shadow: 0 0.125rem 0.25rem rgba(146, 64, 14, 0.4);
+}*/
+
+/* .btn-success:hover {
+  color: #fff;
+  background-color: #f59e0b;
+  border-color: #f59e0b;
+  transform: translateY(-1px);
+}
+*/
