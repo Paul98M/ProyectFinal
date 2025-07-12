@@ -6,7 +6,7 @@ body {
   border: none !important;
 }
 .bi-check-all {
-  font-size: 20px;
+  font-size: 20px;  
 }
 
 
@@ -811,8 +811,8 @@ tbody tr:hover {
 }
 
 .form-control:focus, .form-select:focus {
-  border-color: #08b324;
-  box-shadow: 0 0 0 0.2rem rgba(8, 179, 36, 0.25);
+  border-color: #d97706;
+  box-shadow: 0 0 0 0.2rem rgba(217, 119, 6, 0.25);
 }
 
 .btn-primary {
@@ -1067,6 +1067,13 @@ tbody tr:hover {
 }
 */
 
+
+
+
+.input-group:focus-within .form-control,
+.input-group:focus-within .input-group-text {
+  border-color: #d97706;
+}
 
 
 

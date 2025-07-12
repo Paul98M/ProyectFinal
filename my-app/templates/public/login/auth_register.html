@@ -1,7 +1,5 @@
 {% extends 'public/base_cpanel.html' %}
-<!---->
 {% block title %}Crud con Python 🐍 | crear cuenta{% endblock %}
-<!---->
 {% block body %}
 
 <div class="container-xxl">
@@ -9,13 +7,11 @@
     <div class="authentication-inner">
       <div class="card form-container">
         <div class="card-body">
-          <!-- Título principal -->
           <div class="text-center mb-4">
             <h2 class="section-title">REGISTRAR USUARIO</h2>
             <hr />
           </div>
 
-          <!-- Bloque para mostrar mensajes flash -->
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
               {% for category, message in messages %}
@@ -26,12 +22,6 @@
               {% endfor %}
             {% endif %}
           {% endwith %}
-
-          <!-- Información Personal -->
-          <div class="mb-4">
-            <h3 class="section-title">Información Personal</h3>
-            <p class="section-subtitle">Datos básicos del usuario</p>
-          </div>
 
           <form class="mb-3" id="registerForm" action="{{ url_for('cpanelRegisterUserBD') }}" method="POST">
             <div class="row">
@@ -56,17 +46,17 @@
               <div class="col-md-6 mb-3">
                 <label for="area" class="form-label">ÁREA</label>
                 <select class="form-select" name="selectArea" {%if dataLogin.rol == 2 %} disabled {%endif%}>
-                  {% for area in areas%}
-                  <option value="{{area.id_area}}">{{area.nombre_area}}</option>
-                  {%endfor%}
+                  {% for area in areas %}
+                    <option value="{{ area.id_area }}">{{ area.nombre_area }}</option>
+                  {% endfor %}
                 </select>
               </div>
               <div class="col-md-6 mb-3">
                 <label for="rol" class="form-label">ROL</label>
                 <select class="form-select" name="selectRol" {%if dataLogin.rol == 2 %} disabled {%endif%}>
-                  {% for rol in roles%}
-                  <option value="{{rol.id_rol}}">{{rol.nombre_rol}}</option>
-                  {%endfor%}
+                  {% for rol in roles %}
+                    <option value="{{ rol.id_rol }}">{{ rol.nombre_rol }}</option>
+                  {% endfor %}
                 </select>
               </div>
             </div>
@@ -84,7 +74,7 @@
               </div>
             </div>
 
-            <!-- Sección RFID -->
+            <!-- RFID Section -->
             <div class="rfid-section">
               <div class="rfid-header">
                 <div>
@@ -137,6 +127,9 @@
               </div>
             </div>
 
+            <!-- Campo oculto donde se enviará el UID -->
+            <input type="hidden" name="codigo_rfid" id="codigo_rfid_real" />
+
             <div class="d-flex justify-content-between align-items-center mt-4">
               <a href="{{ url_for('usuarios') }}" class="back-link">
                 <i class="bi bi-arrow-left"></i>
@@ -156,12 +149,10 @@
 
 <!-- JavaScript -->
 <script>
-// Variables globales
 let isScanning = false;
 let rfidDetected = false;
 let detectedCode = '';
 
-// Elementos del DOM
 const scanBtn = document.getElementById('scanBtn');
 const scannerCard = document.getElementById('scannerCard');
 const scannerIcon = document.getElementById('scannerIcon');
@@ -177,14 +168,12 @@ const successMessage = document.getElementById('successMessage');
 const togglePassword = document.getElementById('togglePassword');
 const passwordInput = document.getElementById('pass_user');
 
-// Función para mostrar/ocultar contraseña
-togglePassword.addEventListener('click', function() {
+togglePassword.addEventListener('click', function () {
   const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
   passwordInput.setAttribute('type', type);
-  this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+  this.innerHTML = type === 'password' ? '<i class="bi bi-eye'></i>' : '<i class="bi bi-eye-slash'></i>';
 });
 
-// Función para simular conexión del lector
 function simulateReaderConnection() {
   setTimeout(() => {
     rfidStatus.innerHTML = '<i class="bi bi-wifi status-connected"></i><span class="status-connected">Lector Conectado</span>';
@@ -193,92 +182,78 @@ function simulateReaderConnection() {
   }, 1000);
 }
 
-// Función para escanear tarjeta RFID
 function startRFIDScan() {
   if (isScanning) return;
-  
   isScanning = true;
   scanBtn.disabled = true;
   scanBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Escaneando...';
   scanBtn.classList.add('scanning');
-  
-  // Cambiar estado visual a escaneando
+
   scannerCard.className = 'scanner-card scanning';
   scannerIcon.className = 'scanner-icon scanning';
   scannerIcon.innerHTML = '<i class="bi bi-credit-card"></i>';
   scannerTitle.textContent = 'Escaneando tarjeta...';
   scannerSubtitle.textContent = 'Acerque la tarjeta RFID al lector';
   scannerSubtitle.className = 'scanner-subtitle scanning-subtitle';
-  
-  // Simular proceso de escaneo
+
   setTimeout(() => {
-    // Simular detección de tarjeta
     const simulatedCode = 'RFIDCC7E372A';
     detectedCode = simulatedCode;
     rfidDetected = true;
-    
-    // Cambiar estado visual a detectado
+
     scannerCard.className = 'scanner-card detected';
     scannerIcon.className = 'scanner-icon detected';
     scannerIcon.innerHTML = '<i class="bi bi-check-circle"></i>';
     scannerTitle.textContent = 'Tarjeta detectada';
     scannerSubtitle.textContent = 'RFID asociado correctamente';
     scannerSubtitle.className = 'scanner-subtitle detected-subtitle';
-    
-    // Mostrar código RFID
+
     rfidCode.textContent = simulatedCode;
     rfidCode.classList.remove('d-none');
     rescanBtn.classList.remove('d-none');
-    
-    // Actualizar información
+
     cardStatus.textContent = 'Asociada';
     cardStatus.className = 'info-value success';
     cardCode.textContent = simulatedCode;
-    
-    // Mostrar mensaje de éxito
+
+    document.getElementById('codigo_rfid_real').value = simulatedCode;
     successMessage.classList.remove('d-none');
-    
-    // Resetear botón
+
     scanBtn.disabled = false;
     scanBtn.innerHTML = '<i class="bi bi-upc-scan me-2"></i>Escanear Tarjeta RFID';
     scanBtn.classList.remove('scanning');
     isScanning = false;
-    
   }, 3000);
 }
 
-// Función para resetear el escáner
 function resetScanner() {
   rfidDetected = false;
   detectedCode = '';
-  
+  document.getElementById('codigo_rfid_real').value = '';
+
   scannerCard.className = 'scanner-card ready';
   scannerIcon.className = 'scanner-icon';
   scannerIcon.innerHTML = '<i class="bi bi-credit-card"></i>';
   scannerTitle.textContent = 'Listo para escanear';
   scannerSubtitle.textContent = 'Haga clic en el botón para iniciar el escaneo';
   scannerSubtitle.className = 'scanner-subtitle';
-  
+
   rfidCode.classList.add('d-none');
   rescanBtn.classList.add('d-none');
-  
   cardStatus.textContent = 'Sin asociar';
   cardStatus.className = 'info-value';
   cardCode.textContent = 'No detectado';
-  
   successMessage.classList.add('d-none');
 }
 
-// Eventos
 scanBtn.addEventListener('click', startRFIDScan);
 rescanBtn.addEventListener('click', resetScanner);
 
-// Validación del formulario
-document.getElementById('registerForm').addEventListener('submit', function(e) {
+document.getElementById('registerForm').addEventListener('submit', function (e) {
   const password = passwordInput.value;
   const help = document.getElementById('passwordHelp');
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-  
+
   if (!regex.test(password)) {
     help.textContent = 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.';
     help.classList.remove('d-none');
@@ -288,10 +263,34 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
   }
 });
 
-// Inicializar
-document.addEventListener('DOMContentLoaded', function() {
-  simulateReaderConnection();
+// Simular que RFID ya fue leído desde BD si Flask lo envía
+{% if ultimo_uid %}
+window.addEventListener('DOMContentLoaded', () => {
+  const simulatedCode = "{{ ultimo_uid }}";
+  detectedCode = simulatedCode;
+  rfidDetected = true;
+
+  scannerCard.className = 'scanner-card detected';
+  scannerIcon.className = 'scanner-icon detected';
+  scannerIcon.innerHTML = '<i class="bi bi-check-circle"></i>';
+  scannerTitle.textContent = 'Tarjeta detectada';
+  scannerSubtitle.textContent = 'RFID asociado correctamente';
+  scannerSubtitle.className = 'scanner-subtitle detected-subtitle';
+
+  rfidCode.textContent = simulatedCode;
+  rfidCode.classList.remove('d-none');
+  rescanBtn.classList.remove('d-none');
+
+  cardStatus.textContent = 'Asociada';
+  cardStatus.className = 'info-value success';
+  cardCode.textContent = simulatedCode;
+  document.getElementById('codigo_rfid_real').value = simulatedCode;
+
+  successMessage.classList.remove('d-none');
 });
+{% endif %}
+
+document.addEventListener('DOMContentLoaded', simulateReaderConnection);
 </script>
 
 {% endblock %}
