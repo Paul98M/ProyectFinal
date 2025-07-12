@@ -1,34 +1,87 @@
-{% extends 'public/base_cpanel.html' %} {% block title %}Ingresar Clave
-Temporal{% endblock %} {% block body %}
-<div class="container mt-5">
-  <h3 class="mb-4">Ingresar Clave Temporal</h3>
-  <form action="/validar-clave-temporal" method="POST">
-    <div class="form-group mb-3">
-      <label for="cedula">Cédula:</label>
-      <input
-        type="text"
-        class="form-control"
-        id="cedula"
-        name="cedula"
-        value="{{ dataLogin.cedula }}"
-        readonly
-        style="background-color: #f5f5f5; color: #888"
-      />
+{% extends 'public/base_cpanel.html' %} 
+{% block title %}Ingresar Clave Temporal{% endblock %} 
+
+{% block body %}
+<div class="main-content"> {# Usamos el contenedor principal de tu otro diseño #}
+  <div class="content-card"> {# Esto le dará el estilo de tarjeta grande #}
+    <div class="p-4"> {# Padding interno de la tarjeta, asumiendo que `p-4` existe en tu CSS de Bootstrap o personalizado #}
+      <div class="section-header">
+        <div class="section-icon">
+          <i class="bi bi-shield-lock"></i> {# Icono representativo para ingresar clave #}
+        </div>
+        <div>
+          <h1 class="section-title">Ingresar Clave Temporal</h1>
+          <p class="subtitle">
+            Por favor, ingresa la clave temporal que te fue proporcionada
+          </p>
+        </div>
+      </div>
+
+      <div class="form-section1"> {# Aplicamos el estilo de sección de formulario #}
+        <h3>
+          <i class="bi bi-key-fill"></i> {# Icono para el título de la sección #}
+          Validar Acceso
+        </h3>
+        <form action="/validar-clave-temporal" method="POST">
+          <div class="form-group mb-3">
+            <label for="cedula" class="form-label">Cédula:</label> {# Usamos form-label para el estilo de etiquetas #}
+            <input
+              type="text"
+              class="form-control user-dropdown" {# Usamos user-dropdown para el estilo similar a tu select #}
+              id="cedula"
+              name="cedula"
+              value="{{ dataLogin.cedula }}"
+              readonly
+            />
+          </div>
+          <div class="form-group mb-3">
+            <label for="clave" class="form-label">Clave Temporal:</label>
+            <div class="key-display"> {# Reutilizamos la clase key-display para el input y el botón #}
+              <input
+                type="password" {# Cambiamos a password para ocultar la clave #}
+                class="key-input" {# Usamos key-input para el estilo del campo de clave #}
+                id="clave"
+                name="clave"
+                required
+              />
+              <button class="btn-toggle" type="button" id="togglePassword"> {# Reutilizamos btn-toggle #}
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-generate w-100">Ingresar</button> {# Reutilizamos btn-generate #}
+        </form>
+      </div>
+      
+      {# Mensajes Flash con estilos mejorados, similar a success-message #}
+      {% with messages = get_flashed_messages(with_categories=true) %} 
+      {% if messages %} 
+      <div class="flash-messages-container mt-4">
+        {% for category, message in messages %}
+        <div class="alert {{ 'success-message' if category == 'success' else 'error-message' }}"> {# Usamos success-message para éxito, y una nueva clase para error #}
+            <i class="bi {{ 'bi-check-circle-fill' if category == 'success' else 'bi-exclamation-triangle-fill' }}"></i>
+            {{ message }}
+        </div>
+        {% endfor %} 
+      </div>
+      {% endif %} 
+      {% endwith %} 
     </div>
-    <div class="form-group mb-3">
-      <label for="clave">Clave Temporal:</label>
-      <input
-        type="text"
-        class="form-control"
-        id="clave"
-        name="clave"
-        required
-      />
-    </div>
-    <button type="submit" class="btn btn-primary">Ingresar</button>
-  </form>
+  </div>
 </div>
-{% with messages = get_flashed_messages(with_categories=true) %} {% if messages
-%} {% for category, message in messages %}
-<div class="alert alert-{{ category }} mt-2">{{ message }}</div>
-{% endfor %} {% endif %} {% endwith %} {% endblock %}
+{% endblock %} 
+
+{% block customJS %}
+<script>
+  // Script para el botón de alternar visibilidad de la clave
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.closest('#togglePassword')) {
+        const claveField = document.getElementById("clave"); // El ID es 'clave' para este formulario
+        const icon = e.target.closest('#togglePassword').querySelector("i");
+        const type = claveField.getAttribute("type") === "password" ? "text" : "password";
+        claveField.setAttribute("type", type);
+        icon.className = type === "password" ? "bi bi-eye" : "bi bi-eye-slash";
+    }
+  });
+</script>
+{% endblock %}

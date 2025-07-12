@@ -5,58 +5,78 @@ from conexionBD import connectionBD
 import sys
 import time
 
-def guardar_tarjeta(uid_str: str, conexion_db):
+def guardar_tarjeta(uid, conexion_db):
     """
-    Registra la lectura de una tarjeta RFID en la base de datos.
-    Si la tarjeta ya existe, usa su id_usuario y nombre.
-    Si no, la inserta como 'Desconocido' con id_usuario NULL.
+    Verifica si la tarjeta ya existe. Si no, la guarda como desconocida.
+    Si existe y está activa, muestra el nombre del usuario.
     """
     try:
         with conexion_db.cursor() as cursor:
-            # Buscar si la tarjeta ya existe
-            query_check = "SELECT id_usuario, nombre FROM tarjeta_rfid WHERE tarjeta = %s"
-            cursor.execute(query_check, (uid_str,))
+            # Buscar tarjeta por UID
+            query_select = "SELECT t.id_usuario, u.nombre_usuario, u.apellido_usuario, t.estado FROM tarjeta_rfid t LEFT JOIN usuarios u ON t.id_usuario = u.id_usuario WHERE t.tarjeta = %s"
+            cursor.execute(query_select, (uid,))
             resultado = cursor.fetchone()
 
-            # *** FIX: Cerrar resultados pendientes antes de siguiente execute ***
-            cursor.fetchall()
-
             if resultado:
-                id_usuario, nombre = resultado
-                print(f"✔ Tarjeta {uid_str} registrada anteriormente. Usuario: {nombre}")
+                if resultado["estado"] == "activo":
+                    nombre = f"{resultado['nombre_usuario']} {resultado['apellido_usuario']}"
+                    print(f"✅ Tarjeta autorizada. Usuario: {nombre}")
+                else:
+                    print("⚠️ Tarjeta registrada pero no activa. Acceso denegado.")
             else:
-                id_usuario = None
-                nombre = "Desconocido"
-                print(f"⚠️ Tarjeta {uid_str} no registrada previamente. Se guardará como 'Desconocido'.")
-
-            # Insertar registro en la tabla tarjeta_rfid como log de acceso
-            query_insert = """
-                INSERT INTO tarjeta_rfid (tarjeta, id_usuario, nombre, estado)
-                VALUES (%s, %s, %s, 'activo')
-            """
-            cursor.execute(query_insert, (uid_str, id_usuario, nombre))
-            conexion_db.commit()
-            print(f"💾 Registro de acceso guardado correctamente. UID: {uid_str}")
+                # Insertar como tarjeta desconocida
+                query_insert = "INSERT INTO tarjeta_rfid (tarjeta, estado) VALUES (%s, 'desconocido')"
+                cursor.execute(query_insert, (uid,))
+                conexion_db.commit()
+                print("🆕 Tarjeta desconocida registrada.")
 
     except Exception as e:
-        print(f"❌ Error al guardar la tarjeta RFID: {e}")
+        print(f"❌ Error al procesar tarjeta RFID: {e}")
 
+
+def guardar_alerta_temperatura(valor_temp, conexion_db):
+    """
+    Guarda en la base de datos un registro de alerta de temperatura.
+    """
+    try:
+        with conexion_db.cursor() as cursor:
+            now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            query = "INSERT INTO sensor_temperatura_h (fecha_alerta, temperatura) VALUES (%s, %s)"
+            cursor.execute(query, (now, valor_temp))
+            conexion_db.commit()
+            print(f"🔥 Alerta de temperatura registrada: {valor_temp} °C")
+    except Exception as e:
+        print(f"❌ Error al guardar alerta de temperatura: {e}")
+
+def guardar_alerta_gas(valor_gas, conexion_db):
+    """
+    Guarda en la base de datos un registro de alerta de gas/humo.
+    """
+    try:
+        with conexion_db.cursor() as cursor:
+            now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            query = "INSERT INTO sensor_humo_m (fecha_alerta, valor) VALUES (%s, %s)"
+            cursor.execute(query, (now, valor_gas))
+            conexion_db.commit()
+            print(f"🌫️ Alerta de gas registrada: {valor_gas}")
+    except Exception as e:
+        print(f"❌ Error al guardar alerta de gas: {e}")
 
 def leer_datos_serial(puerto_serial):
     """
     Bucle principal para leer datos del puerto serial y procesarlos.
     """
-    print(f"🔄 Intentando leer desde el puerto {puerto_serial.name}...")
-    print("💳 Modo de lectura de tarjetas RFID activado.")
+    print(f"🔄 Leyendo desde el puerto {puerto_serial.name}...")
+    print("💳 Modo RFID y alerta sensores activado.")
 
     while True:
         try:
             if puerto_serial.in_waiting > 0:
                 linea = puerto_serial.readline().decode('utf-8').strip()
-                
+
+                # Procesar UID de tarjeta
                 if "UID:" in linea:
                     _, uid_raw = linea.split(":", 1)
-                    # Limpiar y unir el UID recibido
                     uid_limpio = "".join(uid_raw.strip().upper().split())
                     print(f"💳 UID de tarjeta recibido: {uid_limpio}")
 
@@ -64,16 +84,33 @@ def leer_datos_serial(puerto_serial):
                         if conexion_MySQLdb:
                             guardar_tarjeta(uid_limpio, conexion_MySQLdb)
 
-                else:
-                    if linea: # Solo imprimir si la línea no está vacía
-                        print(f"📭 Datos no relevantes recibidos: {linea}")
+                # Procesar alerta desde Arduino
+                elif "ALERTA|" in linea:
+                    try:
+                        partes = linea.split('|')
+                        temp = float(partes[1].split(':')[1])
+                        gas = float(partes[2].split(':')[1])
 
-            time.sleep(0.1) # Pequeña pausa para no saturar la CPU
+                        with connectionBD() as conexion_MySQLdb:
+                            if temp > 24:
+                                guardar_alerta_temperatura(temp, conexion_MySQLdb)
+                            if gas > 5:
+                                guardar_alerta_gas(gas, conexion_MySQLdb)
+
+                    except Exception as e:
+                        print(f"❌ Error al procesar datos de alerta: {e}")
+
+                # Otras líneas no relevantes
+                elif linea:
+                    print(f"📭 Datos no relevantes recibidos: {linea}")
+
+            time.sleep(0.1)
+
         except UnicodeDecodeError:
-            print("⚠️ Error de decodificación. Asegúrate de que el baudrate y la codificación son correctos.")
+            print("⚠️ Error de decodificación. Verifica baudrate y codificación.")
         except Exception as e:
             print(f"❌ Error inesperado al leer del puerto serial: {e}")
-            break # Salir del bucle si hay un error grave
+            break
 
 def main(port: str, baud: int):
     """
@@ -85,20 +122,19 @@ def main(port: str, baud: int):
         leer_datos_serial(puerto)
     except serial.SerialException as e:
         print(f"❌ Error al abrir el puerto serial '{port}': {e}")
-        print("Asegúrate de que el dispositivo esté conectado y el puerto sea el correcto.")
+        print("Verifica que el dispositivo esté conectado y el puerto sea el correcto.")
         sys.exit(1)
     except KeyboardInterrupt:
-        print("\n🛑 Programa interrumpido por el usuario. Cerrando...")
+        print("\n🛑 Programa interrumpido por el usuario.")
     finally:
         if puerto and puerto.is_open:
             puerto.close()
             print("🔌 Puerto serial cerrado.")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Lector de tarjetas RFID desde puerto serial.")
-    parser.add_argument('--port', default='COM3', help='Puerto serial a utilizar (ej. COM6 en Windows, /dev/ttyUSB0 en Linux).')
+    parser = argparse.ArgumentParser(description="Lector de tarjetas RFID y alertas desde sensores.")
+    parser.add_argument('--port', default='COM5', help='Puerto serial (ej. COM6 o /dev/ttyUSB0)')
     parser.add_argument('--baud', type=int, default=9600, help='Baudrate del puerto serial.')
-    
+
     args = parser.parse_args()
-    
     main(port=args.port, baud=args.baud)

@@ -156,5 +156,66 @@ def cerraSesion():
             return render_template(f'{PATH_URL_LOGIN}/base_login.html')
 
 
+# =====================================
+# Mostrar formulario para registrar un libro
+# Método: GET
+# =====================================
+@app.route('/register-libro', methods=['GET', 'POST'])
+def cpanelRegisterlibro():
+    if request.method == 'POST':
+        # ... guardar libro en BD ...
 
+        flash('Libro creado exitosamente', 'success')
+        return redirect(url_for('libros1'))
 
+    # GET muestra formulario
+    return render_template(f'{PATH_URL_LOGIN}/auth_registerlibro.html', dataLogin=dataLoginSesion(), areas=lista_areasBD(), roles=lista_rolesBD())
+
+    
+
+# =====================================
+# Procesar formulario de registro de libro
+# Método: POST
+# =====================================
+from flask import request, redirect, url_for, flash
+
+@app.route('/registrar-libro', methods=['POST'])
+def cpanelRegisterLibroBD():
+    # Recibir datos enviados desde el formulario HTML
+    titulo = request.form['titulo']
+    autor = request.form['autor']
+    anio = request.form['anio']
+    categoria = request.form['categoria']
+    ubicacion = request.form['ubicacion']
+    stock_total = int(request.form['stock_total'])
+    estado = request.form['estado']
+
+    cantidad_disponible = stock_total  # Al principio es igual al stock total
+    id_libro = generar_id_unico()      # Generar ID estilo L-01
+
+    # Insertar en la base de datos
+    query = """
+        INSERT INTO libros (
+            id_libro, titulo, autores, ubicacion, categoria,
+            cantidad_disponible, stock_total, anio_publicacion, estado
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """
+    datos = (
+        id_libro, titulo, autor, ubicacion, categoria,
+        cantidad_disponible, stock_total, anio, estado
+    )
+
+    try:
+        with connectionBD() as db:
+            with db.cursor() as cursor:
+                cursor.execute(query, datos)
+            db.commit()
+
+        # Mensaje flash éxito
+        flash('¡Felicitaciones! ✅ El libro fue registrado correctamente. ', 'success')
+    except Exception as e:
+        # Si hay error, puedes capturarlo y mostrar mensaje de error
+        flash(f'Error al registrar el libro: {str(e)}', 'danger')
+
+    return redirect(url_for('libros1'))

@@ -26,11 +26,17 @@ def usuarios():
 @app.route('/borrar-usuario/<string:id>', methods=['GET'])
 def borrarUsuario(id):
     resp = eliminarUsuario(id)
-    if resp:
-        flash('El Usuario fue eliminado correctamente', 'success')
-        return redirect(url_for('usuarios'))
-    
-    
+
+    if resp == "dependencia":
+        flash("⚠️ No se puede eliminar el usuario porque tiene registros asociados en otras tablas.", "danger")
+    elif resp:
+        flash("✅ El Usuario fue eliminado correctamente", "success")
+    else:
+        flash("❌ Error al intentar eliminar el usuario.", "danger")
+
+    return redirect(url_for('usuarios'))
+
+
 @app.route('/borrar-area/<string:id_area>/', methods=['GET'])
 def borrarArea(id_area):
     resp = eliminarArea(id_area)

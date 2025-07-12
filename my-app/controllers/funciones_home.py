@@ -160,7 +160,12 @@ def eliminarUsuario(id):
         return resultado_eliminar
     except Exception as e:
         print(f"Error en eliminarUsuario : {e}")
-        return []    
+
+        # Capturar error de clave foránea
+        if "foreign key constraint fails" in str(e).lower():
+            return "dependencia"  # Palabra clave para manejarlo luego
+        return False
+ 
 
 def eliminarArea(id):
     try:
@@ -264,7 +269,7 @@ def sensor_temperatura():
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 # Modifica la consulta según la estructura de tu base de datos
-                querySQL = "SELECT id_sensor, fecha_alerta, temperatura FROM sensor_temperatura_h"
+                querySQL = "SELECT id_sensor, fecha_alerta, temperatura, descripcion FROM sensor_temperatura_h"
                 cursor.execute(querySQL)
                 datos_sensor_temperatura = cursor.fetchall()
         return datos_sensor_temperatura
@@ -294,7 +299,7 @@ def sensor_humo():
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 # Modifica la consulta según la estructura de tu base de datos
-                querySQL = "SELECT id_sensor, fecha_alerta, valor FROM sensor_humo_m"
+                querySQL = "SELECT id_sensor, fecha_alerta, valor, descripcion FROM sensor_humo_m"
                 cursor.execute(querySQL)
                 datos_sensor_humo = cursor.fetchall()
         return datos_sensor_humo
@@ -323,14 +328,18 @@ def tarjeta():
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Modifica la consulta según la estructura de tu base de datos
-                querySQL = "SELECT nombre, tarjeta, id_usuario, fecha_hora, estado FROM tarjeta_rfid ORDER BY fecha_hora DESC"
+                querySQL = """
+                    SELECT id_tarjeta, tarjeta, nombre_usuario, fecha_hora, estado
+                    FROM tarjeta_rfid
+                    ORDER BY fecha_hora DESC
+                """
                 cursor.execute(querySQL)
                 datos_tarjeta = cursor.fetchall()
         return datos_tarjeta
     except Exception as e:
         print(f"Error al obtener registros de la tarjeta: {e}")
         return []
+
 
 
 from datetime import datetime, timedelta

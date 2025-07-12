@@ -1,12 +1,29 @@
-{% extends 'public/base_cpanel.html' %} {% block title %}Crud con Python 🐍 |
-Lista de Libros{% endblock %} {% block body %}
+{% extends 'public/base_cpanel.html' %} {% block customCSS %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='assets/vendor/css/tabla-bonita.css') }}"
+/>
+<style>
+  /* Oculta la tabla antes de que DataTables la procese */
+  #tbl_libros {
+    visibility: hidden;
+  }
+</style>
+{% endblock %} {% block title %}Gestión de Biblioteca 📚 | Lista de Libros{%
+endblock %} {% block body %}
+
 <div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12 mb-4">
       <h3 class="text-center mt-5 mb-3">LISTA DE LIBROS</h3>
       <hr />
-      <div class="d-flex justify-content-end mb-3 px-3">
-        <a href="/register-libro" class="btn btn-success">
+    </div>
+
+
+    <!-- Botón Nuevo Libro -->
+    <div class="row justify-content-end px-4 mb-3">
+      <div class="col-auto">
+        <a href="/register-libro" class="btn btn-primary">
           <i class="bi bi-plus-circle"></i> Nuevo Libro
         </a>
       </div>
@@ -50,16 +67,16 @@ Lista de Libros{% endblock %} {% block body %}
               </td>
               <td>
                 <a
-                  href="/editar-libro/{{ libro.id_libro }}"
+                  href="{{ url_for('viewEditarLibro', id_libro=libro.id_libro) }}"
                   class="btn btn-success btn-sm"
                   title="Editar libro"
                 >
                   <i class="bi bi-pencil"></i> Editar
                 </a>
                 <a
-                  href="#"
-                  onclick="eliminarLibro('{{ libro.id_libro }}');"
+                  href="{{ url_for('borrarLibro', id=libro.id_libro) }}"
                   class="btn btn-danger btn-sm"
+                  onclick="return confirm('¿Estás seguro de que deseas eliminar este libro?');"
                   title="Eliminar libro"
                 >
                   <i class="bi bi-trash"></i> Eliminar
@@ -75,10 +92,26 @@ Lista de Libros{% endblock %} {% block body %}
 </div>
 {% endblock %} {% block customJS %}
 <script>
-  function eliminarLibro(id) {
-    if (confirm("¿Estás seguro que deseas eliminar el libro?")) {
-      window.location.href = `/borrar-libro/${id}`;
-    }
-  }
+  $(document).ready(function () {
+    // Inicializa DataTables
+    $("#tbl_libros").DataTable({
+      language: {
+        url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json",
+        search: "Buscar:", // Cambia el texto de búsqueda
+      },
+      lengthMenu: [
+        [5, 10, 25, 50, -1],
+        [5, 10, 25, 50, "Todos"],
+      ],
+      pageLength: 5,
+      // Esta función se ejecuta cuando la tabla está completamente dibujada
+      initComplete: function (settings, json) {
+        // Hacemos visible la tabla
+        $(this).css("visibility", "visible");
+      },
+    });
+  });
 </script>
+
 {% endblock %}
+

@@ -1,5 +1,7 @@
-{% extends 'public/base_cpanel.html' %} {% block title %}Generar Clave{%
-endblock %} {% block body %}
+{% extends 'public/base_cpanel.html' %}
+{% block title %}Generar Clave{% endblock %}
+
+{% block body %}
 <div class="main-content">
   <div class="content-card">
     <div class="p-4">
@@ -16,16 +18,15 @@ endblock %} {% block body %}
       </div>
 
       <div class="two-column-layout">
-        <!-- Left Column - User Selection -->
         <div class="form-section">
           <h3>
             <i class="bi bi-person-circle"></i>
             Seleccionar Usuario
           </h3>
 
-          <form class="mb-3" method="POST">
+          <form class="mb-3" method="POST" onsubmit="return false;">
             <div class="user-select-section mb-3">
-              <label for="usuario" class="form-label">Usuario</label>
+              <label for="usuario" class="form-label">USUARIO</label>
               <select
                 class="form-select user-dropdown"
                 id="usuario"
@@ -45,27 +46,32 @@ endblock %} {% block body %}
               </select>
             </div>
 
-            <div class="user-info-box mb-3">
-              <div class="user-info-title fw-bold mb-2">
-                Usuario Seleccionado:
-              </div>
-              <div class="user-info-item mb-1">
-                <span class="user-info-label">Nombre:</span>
-                <span id="nombreUsuario"></span>
-              </div>
-              <div class="user-info-item mb-1">
-                <span class="user-info-label">Cédula:</span>
-                <span id="cedulaUsuario"></span>
-              </div>
-              <div class="user-info-item">
-                <span class="user-info-label">Rol:</span>
-                <span class="user-role-badge" id="rolUsuario"></span>
+            {# ESTE DIV AHORA SOLO CONTIENE LA INFO DEL USUARIO Y SE OCULTA/MUESTRA #}
+            <div id="selectedUserDetails" style="display: none;"> 
+              <div class="user-info-box mb-3">
+                <div class="user-info-title fw-bold mb-2">
+                  Usuario Seleccionado:
+                </div>
+                <div class="user-info-item mb-1">
+                  <span class="user-info-label">Nombre:</span>
+                  <span id="nombreUsuario"></span>
+                </div>
+                <div class="user-info-item mb-1">
+                  <span class="user-info-label">Cédula:</span>
+                  <span id="cedulaUsuario"></span>
+                </div>
+                <div class="user-info-item">
+                  <span class="user-info-label">Rol:</span>
+                  <span class="user-role-badge" id="rolUsuario"></span>
+                </div>
               </div>
             </div>
 
+            {# EL BOTÓN AHORA ESTÁ FUERA DEL DIV selectedUserDetails #}
             <button
+              id="generarClaveBtn"
               type="button"
-              class="btn btn-primary btn-generate w-100"
+              class="btn btn-primary btn-generate w-100 disabled" {# El botón inicia deshabilitado #}
               onclick="generacionClaveSeleccionada()"
             >
               <i class="bi bi-key-fill"></i>
@@ -74,7 +80,6 @@ endblock %} {% block body %}
           </form>
         </div>
 
-        <!-- Right Column - Generated Key -->
         <div class="key-section">
           <h3>
             <i class="bi bi-shield-check"></i>
@@ -84,10 +89,8 @@ endblock %} {% block body %}
           <div id="keyResult" style="display: none">
             <div class="success-message">
               <i class="bi bi-check-circle-fill"></i>
-              ¡Clave generada exitosamente para
-              <strong>{{dataLogin.nombre}}</strong>!
+              ¡Clave generada exitosamente para <span id="usuarioGenerado" class="fw-bold"></span>!
             </div>
-
             <div class="key-label">Clave de Acceso</div>
             <div class="key-display">
               <input
@@ -101,26 +104,19 @@ endblock %} {% block body %}
                 <i class="bi bi-eye"></i>
               </button>
             </div>
-
+            
             <div class="instructions-box">
               <div class="instructions-title">
                 <i class="bi bi-info-circle"></i>
                 Instrucciones Importantes:
               </div>
               <div class="instruction-item">
-                Comparte esta clave de forma segura con el usuario
+                Comparte esta clave de forma segura con el usuario.
               </div>
               <div class="instruction-item">
-                La clave es válida por 24 horas
-              </div>
-              <div class="instruction-item">
-                El usuario debe usar la sección "Colocar Clave" para acceder
-              </div>
-              <div class="instruction-item">
-                Guarda un registro de esta clave para referencia
+                La clave es válida por: <span id="countdownTimer"></span>
               </div>
             </div>
-
             <div class="btn-actions">
               <button type="button" class="btn-copy" onclick="copiarClave()">
                 <i class="bi bi-clipboard"></i>
@@ -131,7 +127,7 @@ endblock %} {% block body %}
               </button>
             </div>
           </div>
-
+          
           <div id="noKeyMessage">
             <div class="no-key-content">
               <i class="bi bi-key no-key-icon"></i>
@@ -145,59 +141,119 @@ endblock %} {% block body %}
     </div>
   </div>
 </div>
-{% endblock %} {% block customJS %}
+{% endblock %}
+
+{% block customJS %}
 <script>
-  function generacionClave(id) {
-    fetch("/generar-y-guardar-clave/" + id)
+  let countdownInterval; // Variable para almacenar el ID del intervalo del contador
+
+  function generacionClave(id_usuario) {
+    // Obtener el nombre del usuario seleccionado para mostrarlo en el mensaje de éxito
+    const select = document.getElementById('usuario');
+    const selectedOption = select.options[select.selectedIndex];
+    const nombreUsuarioGenerado = selectedOption.dataset.nombre;
+
+    fetch("/generar-y-guardar-clave/" + id_usuario)
       .then((response) => response.text())
       .then((data) => {
         document.getElementById("clave_audi").value = data.trim();
         document.getElementById("noKeyMessage").style.display = "none";
         document.getElementById("keyResult").style.display = "block";
+        
+        // Mostrar el nombre del usuario en el mensaje de clave generada
+        document.getElementById("usuarioGenerado").innerText = nombreUsuarioGenerado;
+
+        // Iniciar el contador
+        startCountdown(2 * 60); // 2 minutos * 60 segundos/minuto
       })
       .catch((error) => {
         console.error("Error:", error);
       });
   }
-  
+
+  function startCountdown(durationInSeconds) {
+    let timer = durationInSeconds;
+    const countdownDisplay = document.getElementById('countdownTimer');
+
+    // Limpiar cualquier contador existente para evitar múltiples contadores
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+    }
+
+    countdownInterval = setInterval(function () {
+      let minutes = parseInt(timer / 60, 10);
+      let seconds = parseInt(timer % 60, 10);
+
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+
+      countdownDisplay.textContent = minutes + ":" + seconds;
+
+      if (--timer < 0) {
+        clearInterval(countdownInterval);
+        countdownDisplay.textContent = "00:00 (Expirada)";
+        // Opcional: deshabilitar el botón de copiar o la clave aquí
+        document.getElementById("clave_audi").value = "Clave Expirada";
+        document.getElementById("clave_audi").disabled = true; // Deshabilita el input
+        document.querySelector(".btn-copy").disabled = true; // Deshabilita el botón copiar
+      }
+    }, 1000); // Actualiza cada segundo
+  }
 
   function mostrarDatosUsuario(select) {
     const selected = select.options[select.selectedIndex];
-    document.getElementById('nombreUsuario').innerText = selected.dataset.nombre || '';
-    document.getElementById('cedulaUsuario').innerText = selected.dataset.cedula || '';
-    document.getElementById('rolUsuario').innerText = selected.dataset.rol || '';
+    const generateButton = document.getElementById('generarClaveBtn');
+    const userDetailsDiv = document.getElementById('selectedUserDetails'); 
+    
+    if (select.value) { 
+      document.getElementById('nombreUsuario').innerText = selected.dataset.nombre || '';
+      document.getElementById('cedulaUsuario').innerText = selected.dataset.cedula || '';
+      document.getElementById('rolUsuario').innerText = selected.dataset.rol || '';
+      generateButton.classList.remove('disabled'); 
+      userDetailsDiv.style.display = 'block'; 
+    } else { 
+      document.getElementById('nombreUsuario').innerText = '';
+      document.getElementById('cedulaUsuario').innerText = '';
+      document.getElementById('rolUsuario').innerText = '';
+      generateButton.classList.add('disabled'); 
+      userDetailsDiv.style.display = 'none'; 
+    }
   }
 
   function generacionClaveSeleccionada() {
+    if (document.getElementById('generarClaveBtn').classList.contains('disabled')) {
+      return; 
+    }
     const select = document.getElementById('usuario');
     const id_usuario = select.value;
     if (!id_usuario) {
-      alert('Selecciona un usuario');
+      alert('Por favor, selecciona un usuario.');
       return;
     }
-    generacionClave(id_usuario); // Llama a tu función AJAX existente
+    generacionClave(id_usuario);
   }
 
-  // MOSTRAR Y OCULTAR CONTRASEÑA
-  document
-    .getElementById("togglePassword")
-    .addEventListener("click", function () {
-      const claveField = document.getElementById("clave_audi");
-      const icon = this.querySelector("i");
-      const type =
-        claveField.getAttribute("type") === "password" ? "text" : "password";
-      claveField.setAttribute("type", type);
-      icon.className = type === "password" ? "bi bi-eye" : "bi bi-eye-slash";
-    });
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.closest('#togglePassword')) {
+        const claveField = document.getElementById("clave_audi");
+        const icon = e.target.closest('#togglePassword').querySelector("i");
+        const type = claveField.getAttribute("type") === "password" ? "text" : "password";
+        claveField.setAttribute("type", type);
+        icon.className = type === "password" ? "bi bi-eye" : "bi bi-eye-slash";
+    }
+  });
 
   function copiarClave() {
-    const clave = document.getElementById("clave_audi").value;
-    navigator.clipboard.writeText(clave).then(() => {
+    const claveInput = document.getElementById("clave_audi");
+    // No copiar si la clave está expirada o deshabilitada
+    if (claveInput.disabled || claveInput.value === "Clave Expirada") {
+        return; 
+    }
+    navigator.clipboard.writeText(claveInput.value).then(() => {
       const btn = event.target.closest("button");
       const originalText = btn.innerHTML;
       btn.innerHTML = '<i class="bi bi-check"></i>¡Copiado!';
       btn.classList.add("copied");
-
       setTimeout(() => {
         btn.innerHTML = originalText;
         btn.classList.remove("copied");
@@ -206,9 +262,33 @@ endblock %} {% block body %}
   }
 
   function nuevaClave() {
+    // Detener el contador si está activo
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+      countdownInterval = null; // Resetear la variable
+    }
+
     document.getElementById("noKeyMessage").style.display = "block";
     document.getElementById("keyResult").style.display = "none";
     document.getElementById("clave_audi").value = "";
+    document.getElementById("clave_audi").disabled = false; // Habilitar el input de clave
+    document.querySelector(".btn-copy").disabled = false; // Habilitar el botón copiar
+
+    // Restablecer el texto del contador y el nombre del usuario
+    document.getElementById("countdownTimer").textContent = "";
+    document.getElementById("usuarioGenerado").textContent = "";
+
+    const userSelect = document.getElementById('usuario');
+    userSelect.value = ''; 
+    mostrarDatosUsuario(userSelect); 
   }
+
+  // Ejecutar mostrarDatosUsuario al cargar la página para establecer el estado inicial correcto
+  document.addEventListener('DOMContentLoaded', (event) => {
+    const userSelect = document.getElementById('usuario');
+    if (userSelect.value === "") { 
+        mostrarDatosUsuario(userSelect);
+    }
+  });
 </script>
 {% endblock %}

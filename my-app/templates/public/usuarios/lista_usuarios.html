@@ -1,59 +1,82 @@
-{% extends 'public/base_cpanel.html' %}
-<!--Cambiando el title-->
+{% extends 'public/base_cpanel.html' %} 
+
+{% block customCSS %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='assets/vendor/css/tabla-bonita.css') }}"
+/>
+<style>
+  /* Oculta la tabla antes de que DataTables la procese */
+  #tbl_libros {
+    visibility: hidden;
+  }
+</style>
+{% endblock %} {# Asegúrate de que el bloque customCSS esté cerrado #}
+
 {% block title %}Crud - Python 🐍 | Lista de Usuarios{% endblock %}
-<!---->
-{% block body %} {% if (resp_usuariosBD) %}
 
-<div class="card content_consignaciones" style="border-radius: 0px !important">
-  <section id="respuestaFiltroMes">
-    <h2 class="text-center mt-5 mb-5">
-      Lista de Usuarios
+{% block body %} 
+{# Asegúrate de cerrar este bloque `if` antes de `endblock body` #}
+{% if resp_usuariosBD %} 
+
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12 mb-4">
+      <h3 class="text-center mt-5 mb-3">LISTA DE USUARIOS</h3>
       <hr />
-    </h2>
+    </div>
 
-    <p class="btn btn-success" style="margin-left: 10px;">
-      <a href="./register-user">
-        <span style="color: white;">Nuevo Usuario</span>
-      </a>
-    </p>
+    <div class="row justify-content-end px-4 mb-3">
+      <div class="col-auto">
+        <a href="./register-user" class="btn btn-primary">
+          <i class="bi bi-plus-circle"></i> Nuevo Usuario
+        </a>
+      </div>
+    </div>
 
-    <div class="table-responsive text-nowrap">
-      <table class="table table-hover">
-        <thead>
-          <tr style="background-color: #ddd">
-            <th>Cédula</th>
-            <th>Nombre</th>
-            <th>Área</th>
-            <th>Rol</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for usuario in resp_usuariosBD %}
-          <tr>
-            <td>{{ usuario.cedula}}</td>
-            <td>{{ usuario.nombre_usuario}} {{usuario.apellido_usuario}}</td> 
-            <td>
-              {%for area in areas%}
-              {%if area.id_area == usuario.id_area%}
-              {{area.nombre_area}}
-              {%endif%}
-              {%endfor%}
-            </td>
-            <td>
-              {% for rol in roles%}
-              {% if rol.id_rol == usuario.id_rol%}
-              {{ rol.nombre_rol}}
-              {%endif%}
-              {%endfor%}
-            </td>
-            <td>
-              <a
+    <div class="row justify-content-center mb-2">
+      <div class="table-responsive text-nowrap table-hover">
+        <table
+          id="tbl_libros"
+          class="table table-striped table-bordered"
+          cellspacing="0"
+          width="100%"
+        >
+          <thead>
+            <tr>
+              <th>Cédula</th>
+              <th>Nombre</th>
+              <th>Área</th>
+              <th>Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for usuario in resp_usuariosBD %}
+            <tr>
+              <td>{{ usuario.cedula}}</td>
+              <td>{{ usuario.nombre_usuario}} {{usuario.apellido_usuario}}</td>
+              <td>
+                {% for area in areas %} 
+                  {% if area.id_area == usuario.id_area %}
+                    {{ area.nombre_area }} 
+                  {% endif %} 
+                {% endfor %}
+              </td>
+              <td>
+                {% for rol in roles %} 
+                  {% if rol.id_rol == usuario.id_rol %} 
+                    {{ rol.nombre_rol }} 
+                  {% endif %} 
+                {% endfor %}
+              </td>
+              <td>
+                <a
                   href="/mi-perfil/{{usuario.id_usuario}}"
                   class="btn btn-success btn-sm"
-                  tooltip="Actualizar Registro">
-                  <i class="bi bi-arrow-clockwise"></i>
-                  Actualizar
+                  title="Editar usuario"
+                >
+                  <i class="bi bi-pencil"></i> Editar
                 </a>
                 <a
                   style="color: white;"
@@ -67,29 +90,42 @@
                   <i class="bi bi-trash3"></i>
                   Eliminar
                 </a>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </section>
-</div>
-{% else %}
-<div class="container mt-3 mb-3" style="width: 100% !important">
-  <div class="row justify-content-md-center mb-2">
-    <div class="col-12">
-      <h2 class="text-center">No hay usuarios 😭</h2>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
-{% endif %}
-<!--Fin del Block-->
-{% endblock %}
 
-<!--Script Custom-->
-{% block customJS %}
+{% endif %} {# <--- ESTE ES EL `ENDIF` FALTANTE #}
+
+{% endblock %} 
+
+{% block customJS %} {% raw %}
 <script>
+  $(document).ready(function () {
+    // Inicializa DataTables
+    $("#tbl_libros").DataTable({
+      language: {
+        url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json",
+        search: "Buscar:", // Cambia el texto de búsqueda
+      },
+      lengthMenu: [
+        [5, 10, 25, 50, -1],
+        [5, 10, 25, 50, "Todos"],
+      ],
+      pageLength: 5,
+      // Esta función se ejecuta cuando la tabla está completamente dibujada
+      initComplete: function (settings, json) {
+        // Hacemos visible la tabla
+        $(this).css("visibility", "visible");
+      },
+    });
+  });
+
   function eliminarUsuario(id) {
     if (confirm("¿Estas seguro que deseas eliminar el Usuario?")) {
       let url = `/borrar-usuario/${id}`;
@@ -99,4 +135,5 @@
     }
   }
 </script>
-{% endblock %}
+{% endraw %} 
+{% endblock %} {# Asegúrate de que el bloque customJS esté cerrado #}

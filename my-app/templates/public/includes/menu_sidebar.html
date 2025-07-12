@@ -1,4 +1,4 @@
-<aside id="layout-menu" class="layout-menu menu-vertical">
+<aside id="layout-menu" class="layout-menu menu-vertical ">
   <div class="app-brand">
     <a href="{{ url_for('inicio') }}" class="app-brand-link">
       <div class="app-brand-logo">
@@ -37,17 +37,8 @@
     </li>
     {%endif%}
 
-    <li
-      class="menu-item {% if request.path == '/reporte-accesos' %} active {% endif %}"
-    >
-      <a href="/reporte-accesos" class="menu-link">
-        <i class="menu-icon bi bi-file-lock-fill"></i>
-        <div>Reporte Accesos</div>
-      </a>
-    </li>
-
-    <li
-      class="menu-item {% if request.path == '/mi-perfil/{{dataLogin.id}}' %} active {% endif %}"
+     <li
+      class="menu-item {% if request.path.startswith('/mi-perfil/') %} active {% endif %}"
     >
       <a href="/mi-perfil/{{dataLogin.id}}" class="menu-link">
         <i class="menu-icon bi bi-person-fill-gear"></i>
@@ -71,7 +62,7 @@
     </li>
 
     <li
-      class="menu-item {% if request.path == '/lista-de-libros1' %} active {% endif %}"
+      class="menu-item {% if request.path == '/lista-de-libros' %} active {% endif %}"
     >
       <a href="/lista-de-libros" class="menu-link">
         <i class="menu-icon bi bi-book-half"></i>

@@ -16,7 +16,7 @@ def connectionBD():
             user="root",
             passwd="rootpassword",
                 #passwd="-D2eD6aDb5Bg6dEbhAAeBB6gd3EheaBg",
-            database="cloud",
+            database="cloud1",
                 #database="crud_python",
             charset='utf8mb4',
             collation='utf8mb4_unicode_ci',
@@ -29,3 +29,5 @@ def connectionBD():
 
     except mysql.connector.Error as error:
         print(f"No se pudo conectar: {error}")
+
+

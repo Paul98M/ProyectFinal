@@ -1,0 +1,59 @@
+{% extends 'public/base_cpanel.html' %}
+{% block title %}Editar Libro{% endblock %}
+
+{% block body %}
+<div class="card mt-4">
+  <div class="card-body">
+    <h3 class="mb-4">Editar Libro</h3>
+    <form method="POST" action="{{ url_for('actualizarLibro') }}">
+      <input type="hidden" name="id_libro" value="{{ libro.id_libro }}">
+
+      <div class="mb-3">
+        <label for="titulo" class="form-label">Título</label>
+        <input type="text" name="titulo" class="form-control" value="{{ libro.titulo }}" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="autores" class="form-label">Autor(es)</label>
+        <input type="text" name="autores" class="form-control" value="{{ libro.autores }}" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="ubicacion" class="form-label">Ubicación</label>
+        <input type="text" name="ubicacion" class="form-control" value="{{ libro.ubicacion }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="categoria" class="form-label">Categoría</label>
+        <input type="text" name="categoria" class="form-control" value="{{ libro.categoria }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="cantidad_disponible" class="form-label">Cantidad Disponible</label>
+        <input type="number" name="cantidad_disponible" class="form-control" value="{{ libro.cantidad_disponible }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="stock_total" class="form-label">Stock Total</label>
+        <input type="number" name="stock_total" class="form-control" value="{{ libro.stock_total }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="anio_publicacion" class="form-label">Año de Publicación</label>
+        <input type="number" name="anio_publicacion" class="form-control" value="{{ libro.anio_publicacion }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="estado" class="form-label">Estado</label>
+        <select name="estado" class="form-select">
+          <option value="activo" {% if libro.estado == 'activo' %}selected{% endif %}>Activo</option>
+          <option value="inactivo" {% if libro.estado == 'inactivo' %}selected{% endif %}>Inactivo</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Actualizar</button>
+      <a href="{{ url_for('libros1') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

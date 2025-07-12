@@ -274,26 +274,6 @@
     outline-offset: 2px;
 }
 
-/* Loading spinner personalizado (el tuyo existente) */
-.loading-spinner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 200px; /* Ayuda a prevenir cambios de diseño */
-    color: var(--libropoli-gold);
-    font-size: 16px;
-}
-
-.loading-spinner::before {
-    content: '';
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--libropoli-cream);
-    border-top: 2px solid var(--libropoli-gold);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-right: 10px;
-}
 
 @keyframes spin {
     0% { transform: rotate(0deg); }

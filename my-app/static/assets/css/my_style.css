@@ -302,6 +302,14 @@ tbody tr:hover {
   background: var(--libropoli-cream-light);
   padding: 25px;
   border-radius: 12px;
+  border: 1.6px solid var(--libropoli-cream);
+}
+
+/* Form Section */
+.form-section1 {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
   border: 1px solid var(--libropoli-cream);
 }
 
@@ -394,6 +402,7 @@ tbody tr:hover {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  box-shadow: 0 4px 8px 0 rgba(241, 152, 10, 0.6);
 }
 
 .btn-generate:hover {
@@ -405,7 +414,7 @@ tbody tr:hover {
 /* Key Section */
 .key-section {
   background: var(--libropoli-white);
-  border: 1px solid var(--libropoli-gray-200);
+  border: 1.5px solid var(--libropoli-gray-200);
   border-radius: 12px;
   padding: 25px;
 }
@@ -607,6 +616,157 @@ tbody tr:hover {
     margin-right: 0;
   }
 }
+
+
+/* Estilos para el contador */
+#countdownTimer {
+    font-size: 1.1em; /* Un poco más grande */
+    font-weight: bold; /* Ya lo tiene, pero lo reforzamos */
+    color: #dc3545; /* Rojo de Bootstrap (danger) */
+    /* Podemos añadir una animación sutil si queremos que parpadee cerca del final */
+    /* animation: blink-red 1s infinite; */
+}
+
+/* @keyframes blink-red {
+    0% { color: #dc3545; }
+    50% { color: #ffc107; } /* Un amarillo para el parpadeo */
+ /*    100% { color: #dc3545; } /* 
+} f
+
+/* Estilos para el campo de la clave y el botón de alternar */
+.key-display {
+    display: flex; /* Para que el input y el botón estén en línea */
+    border: 1px solid #ced4da; /* Borde del input por defecto */
+    border-radius: 0.375rem; /* radio de borde de Bootstrap */
+    overflow: hidden; /* Asegura que el borde se aplique bien */
+}
+
+.key-input {
+    flex-grow: 1; /* Ocupa el espacio restante */
+    border: none; /* Elimina el borde del input individual */
+    padding: 0.375rem 0.75rem; /* Padding estándar de form-control */
+    outline: none; /* Quita el contorno al enfocar */
+    background-color: #fff; /* Fondo blanco */
+}
+
+.key-input[readonly] {
+    background-color: #e9ecef; /* Color para campos de solo lectura, si aplica */
+    opacity: 1; /* Asegura que no esté transparente */
+}
+
+.btn-toggle {
+    background-color: #f8f9fa; /* Un fondo claro para el botón */
+    border: none; /* Sin borde */
+    padding: 0.375rem 0.75rem;
+    cursor: pointer;
+    border-left: 1px solid #ced4da; /* Una pequeña línea para separarlo visualmente */
+    color: #495057; /* Color de icono oscuro */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.btn-toggle:hover {
+    background-color: #e2e6ea; /* Cambio de color al pasar el ratón */
+}
+
+/* Si el botón de copiar tiene la clase copied, puedes estilizarla */
+.btn-copy.copied {
+    background-color: #28a745; /* Verde para indicar copiado */
+    color: white;
+}
+
+
+/* Estilos para el contador */
+
+#countdownTimer {
+    display: inline-block;
+    padding: 0.3em 0.7em;
+    border-radius: 0.3rem;
+    background-color: transparent;
+    color: #ffffff; /* Verde neón brillante */
+    font-size: 1.8em; /* Más grande */
+    font-weight: 900; /* Ultra bold */
+    min-width: 80px;
+    text-align: center;
+    transition: color 0.3s ease;
+}
+
+
+/* Estilos cuando el tiempo es de advertencia (últimos 30 segundos) */
+.countdown-warning {
+    color: #ffc107; /* Amarillo/naranja de Bootstrap. Prueba con 'orange' o '#FFEA00' */
+    font-weight: bolder; /* Más negrita */
+    /* background-color: rgba(255, 193, 7, 0.2); Si quieres un fondo sutil de advertencia */
+}
+
+/* Estilos cuando el tiempo ha expirado */
+.countdown-expired {
+    color: #dc3545; /* Rojo de Bootstrap. Puedes probar un rojo más fuerte como '#FF0000' */
+    font-weight: bolder;
+    /* background-color: rgba(220, 53, 69, 0.2); Si quieres un fondo sutil de expiración */
+}
+
+/* --- Estilos para el botón de alternar visibilidad de la clave (revisados para mejor aspecto) --- */
+.key-display {
+    display: flex;
+    border: 1px solid #ced4da; /* Borde sutil */
+    border-radius: 0.375rem;
+    overflow: hidden; /* Importante para que el borde se aplique a todo el grupo */
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.075); /* Sombra interna para profundidad */
+}
+
+.key-input {
+    flex-grow: 1;
+    border: none; /* Elimina el borde individual */
+    padding: 0.375rem 0.75rem;
+    outline: none; /* Quita el contorno azul al enfocar */
+    background-color: #f8f9fa; /* Fondo ligeramente gris para el input */
+    font-family: monospace; /* Para que la clave se vea más uniforme */
+    font-size: 1.1em;
+}
+
+.key-input[readonly] {
+    background-color: #e9ecef; /* Un gris más oscuro para solo lectura */
+}
+
+.btn-toggle {
+    background-color: #e2e6ea; /* Fondo más grisáceo para el botón */
+    border: none;
+    border-left: 1px solid #ced4da; /* Separador visual */
+    padding: 0.375rem 0.75rem;
+    cursor: pointer;
+    color: #495057; /* Color de icono */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-toggle:hover {
+    background-color: #d3d9df; /* Un gris más oscuro al pasar el ratón */
+    color: #212529; /* Color de icono más oscuro al pasar el ratón */
+}
+
+.btn-copy.copied {
+    background-color: #28a745;
+    color: white;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -906,3 +1066,7 @@ tbody tr:hover {
   transform: translateY(-1px);
 }
 */
+
+
+
+

@@ -1,11 +1,18 @@
-<script src="{{ url_for('static', filename ='assets/vendor/libs/jquery/jquery.js') }}"></script>
+<!-- jQuery PRIMERO - SOLO UNA VERSIÓN -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- Resto de librerías -->
 <script src="{{ url_for('static', filename ='assets/vendor/libs/popper/popper.js') }}"></script>
 <script src="{{ url_for('static', filename ='assets/vendor/js/bootstrap.js') }}"></script>
 <script src="{{ url_for('static', filename ='assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
 <script src="{{ url_for('static', filename ='assets/vendor/js/menu.js') }}"></script>
 <script src="{{ url_for('static', filename ='assets/js/main.js') }}"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+<!-- DataTables DESPUÉS de jQuery -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+<!-- Tus scripts personalizados AL FINAL -->
 <script src="{{ url_for('static', filename ='assets/customJS/home.js') }}"></script>
 <script src="{{ url_for('static', filename ='assets/customJS/buscador.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/tabla.js') }}"></script>

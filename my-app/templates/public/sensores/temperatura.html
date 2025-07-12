@@ -1,66 +1,102 @@
-{% extends 'public/base_cpanel.html' %}
+{% extends 'public/base_cpanel.html' %} {% block customCSS %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='assets/vendor/css/tabla-bonita.css') }}"
+/>
+<style>
+  /* Oculta la tabla antes de que DataTables la procese */
+  #tbl_libros {
+    visibility: hidden;
+  }
+</style>
+{% endblock %} {% block title %}Data Center 🖥 | Sensores de Temperatura{%
+endblock %} {% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12 mb-4">
+      <h3 class="text-center mt-5 mb-3">REGISTROS DE TEMPERATURA</h3>
+      <hr />
+    </div>
 
-{% block title %}Data Center 🖥 | Sensores {% endblock %}
-
-{% block body %}
-  <div class="card content_consignaciones" style="border-radius: 0px !important">
-    <section id="respuestaFiltroMes">
-      <h2 class="text-center mt-5 mb-5">
-        Sensor de temperatura 
-        <hr />
-      </h2>
-
-      <div class="table-responsive text-nowrap">
-        <table class="table table-hover">
+    <div class="row justify-content-center mb-2">
+      <div class="table-responsive text-nowrap table-hover px-4">
+        <table
+          id="tbl_libros"
+          class="table table-striped table-bordered"
+          cellspacing="0"
+          width="100%"
+        >
           <thead>
-            <tr style="background-color: #8e8e8e">
+            <tr>
               <th>ID</th>
               <th>Fecha</th>
               <th>Temperatura</th>
-              <!-- Columna eliminada: <th>Humedad</th> -->
-              <th>Acciones</th>
+              <th>Descripción</th>
+              <th>Acción</th>
             </tr>
           </thead>
           <tbody>
             {% for sensor_temperatura_h in datos_sensor_temperatura %}
-              <tr>
-                <td>{{ sensor_temperatura_h.id_sensor }}</td>
-                <td>{{ sensor_temperatura_h.fecha_alerta }}</td>
-                <td>{{ sensor_temperatura_h.temperatura }}</td>
-                <!-- Columna eliminada: <td>{{ sensor_temperatura_h.humedad }}</td> -->
-                <td>
-                  <!-- Botón de eliminar -->
-                  <a style="color: white;"
-                     onclick="eliminarSensor('{{ sensor_temperatura_h.id_sensor }}');"
-                     class="btn btn-danger btn-sm"
-                     data-bs-toggle="tooltip"
-                     data-bs-offset="0,4"
-                     data-bs-placement="top"
-                     data-bs-html="true"
-                     title="<span>Eliminar Sensor ID {{ sensor_temperatura_h.id_sensor }}</span>">
-                    <i class="bi bi-trash3"></i>
-                    Eliminar
-                  </a>
-                </td>
-              </tr>
+            <tr id="temperatura_{{ sensor_temperatura_h.id_sensor }}">
+              <td>{{ sensor_temperatura_h.id_sensor }}</td>
+              <td>{{ sensor_temperatura_h.fecha_alerta }}</td>
+              <td>{{ sensor_temperatura_h.temperatura }}</td>
+              <td>
+                {% if sensor_temperatura_h.descripcion == 'Temperatura crítica'
+                %}
+                <span class="badge bg-dangerb"
+                  >{{ sensor_temperatura_h.descripcion }}</span
+                >
+                {% else %}
+                <span class="badge bg-success"
+                  >{{ sensor_temperatura_h.descripcion }}</span
+                >
+                {% endif %}
+              </td>
+              <td>
+                <a
+                  href="#"
+                  onclick="eliminarSensor('{{ sensor_temperatura_h.id_sensor }}');"
+                  class="btn btn-danger btn-sm"
+                  title="Eliminar registro de temperatura"
+                >
+                  <i class="bi bi-trash3"></i> Eliminar
+                </a>
+              </td>
+            </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
-    </section>
+    </div>
   </div>
-
-  <!-- Script Custom -->
-  {% block customJS %}
-  <script>
-    function eliminarSensor(id_sensor) {
-      if (confirm("¿Estás seguro que deseas eliminar el Sensor?")) {
-        let url = `/eliminar-sensor-temperatura/${id_sensor}`;
-        if (url) {
-          window.location.href = url;
-        }
-      }
+</div>
+{% endblock %} {% block customJS %}
+<script>
+  function eliminarSensor(id_sensor) {
+    if (confirm("¿Estás seguro que deseas eliminar este registro?")) {
+      window.location.href = `/eliminar-sensor-temperatura/${id_sensor}`;
     }
-  </script>
-  {% endblock %}
+  }
+
+  $(document).ready(function () {
+    // Inicializa DataTables
+    $("#tbl_libros").DataTable({
+      language: {
+        url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json",
+        search: "Buscar:", // Cambia el texto de búsqueda
+      },
+      lengthMenu: [
+        [5, 10, 25, 50, -1],
+        [5, 10, 25, 50, "Todos"],
+      ],
+      pageLength: 5,
+      // Esta función se ejecuta cuando la tabla está completamente dibujada
+      initComplete: function (settings, json) {
+        // Hacemos visible la tabla
+        $(this).css("visibility", "visible");
+      },
+    });
+  });
+</script>
 {% endblock %}

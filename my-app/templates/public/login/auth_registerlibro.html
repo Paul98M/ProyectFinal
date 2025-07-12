@@ -1,0 +1,116 @@
+{% extends 'public/base_cpanel.html' %}
+<!---->
+{% block title %}Gestión de Biblioteca 📚 | Registrar Libro{% endblock %}
+<!---->
+{% block body %}
+
+<div class="container-xxl">
+  <div class="authentication-wrapper authentication-basic container-p-y">
+    <div class="authentication-inner">
+      <div class="card">
+        <div class="card-body">
+          <div class="app-brand justify-content-center">
+            <div class="col-md-12">
+              <h3 class="text-center mt-5 mb-3">REGISTRAR NUEVO LIBRO</h3>
+              <hr />
+            </div>
+          </div>
+
+          <form
+            class="mb-3"
+            action="{{ url_for('cpanelRegisterLibroBD') }}"
+            method="POST"
+          >
+            <!-- Título -->
+            <div class="mb-3">
+              <label for="titulo" class="form-label">Título</label>
+              <input type="text" class="form-control" name="titulo" required />
+            </div>
+
+            <!-- Autor y Año -->
+            <div class="row">
+              <div class="mb-3 col-md-6">
+                <label for="autor" class="form-label">Autor(es)</label>
+                <input type="text" class="form-control" name="autor" required />
+              </div>
+              <!-- Año de Publicación -->
+              <div class="mb-3 col-md-6">
+                <label for="anio" class="form-label">Año de Publicación</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  name="anio"
+                  min="1400"
+                  max="2100"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Categoría -->
+            <div class="mb-3">
+              <label for="categoria" class="form-label">Categoría</label>
+              <input
+                type="text"
+                class="form-control"
+                name="categoria"
+                required
+              />
+            </div>
+            <!-- Ubicación -->
+            <div class="mb-3">
+              <label for="ubicacion" class="form-label">Ubicación</label>
+              <input
+                type="text"
+                class="form-control"
+                name="ubicacion"
+                required
+              />
+            </div>
+
+            <!-- Stock Total -->
+            <div class="mb-3">
+              <label for="stock_total" class="form-label"
+                >Cantidad Total en Stock</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                name="stock_total"
+                min="1"
+                required
+              />
+            </div>
+
+            <!-- Estado -->
+            <div class="mb-3">
+              <label for="estado" class="form-label">Estado</label>
+              <select class="form-select" name="estado" required>
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+              </select>
+            </div>
+
+            <!-- Botón de envío -->
+            <button class="btn btn-primary w-100" type="submit">
+              Registrar Libro <i class="bi bi-arrow-right-circle"></i>
+            </button>
+          </form>
+
+          <!-- Volver -->
+          <div class="text-center mt-3">
+            <a
+              href="{{ url_for('libros1') }}"
+              class="d-flex align-items-center justify-content-center"
+            >
+              <i class="bx bx-chevron-left scaleX-n1-rtl bx-sm"></i>
+              Volver a Lista de Libros
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
